@@ -48,4 +48,4 @@ jobs:
        # Push New Changes
       - name: Push new changes to heroku
         run: |
-          git push -f heroku main
+          git push -f heroku master
