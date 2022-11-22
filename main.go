@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"ourgym/config"
 	"ourgym/routes"
 )
@@ -10,5 +11,11 @@ func main() {
 
 	route := routes.InitRoute()
 
-	route.Logger.Fatal(route.Start(":8080"))
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "8080"
+	}
+
+	route.Logger.Fatal(route.Start(":" + port))
 }

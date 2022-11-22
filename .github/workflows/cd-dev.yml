@@ -1,0 +1,51 @@
+name: CD DEV
+on:
+  push:
+    branches:
+      - "development"
+      
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    name: "testing"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - name: run unit test
+        run: go test -v ./...
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: "deploy dev"
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      # Setup Heroku
+      - name: Setup Heroku CLI
+        run: sudo curl https://cli-assets.heroku.com/install.sh | sh         
+          
+
+      # Setup Heroku Git
+      - name: Setup Heroku GIT
+        env:
+          TOKEN: ${{ secrets.HEROKU_TOKEN }}
+          APP_DEV: ${{ secrets.HEROKU_APP_DEV }}
+        run: |
+          rm -rf .git
+          git init
+          git config --global user.name "AndiAnugrahAqsa"
+          git config --global user.email andianugrahaqsa@gmail.com
+          git add .
+          git commit -m "deploy dev"
+          git remote add heroku https://heroku:$TOKEN@git.heroku.com/$APP_DEV.git
+      
+       # Push New Changes
+      - name: Push new changes to heroku
+        run: |
+          git push -f heroku main

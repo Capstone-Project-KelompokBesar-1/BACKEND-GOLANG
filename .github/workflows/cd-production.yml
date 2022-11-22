@@ -1,0 +1,51 @@
+name: CD PRODUCTION
+on:
+  push:
+    branches:
+      - "main"
+      
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    name: "testing"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - name: run unit test
+        run: go test -v ./...
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: "deploy production"
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      # Setup Heroku
+      - name: Setup Heroku CLI
+        run: sudo curl https://cli-assets.heroku.com/install.sh | sh         
+          
+
+      # Setup Heroku Git
+      - name: Setup Heroku GIT
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          APP_PRODUCTION: ${{ secrets.HEROKU_APP_PRODUCTION }}
+        run: |
+          rm -rf .git
+          git init
+          git config --global user.name "AndiAnugrahAqsa"
+          git config --global user.email andianugrahaqsa@gmail.com
+          git add .
+          git commit -m "deploy production"
+          git remote add heroku https://heroku:$TOKEN@git.heroku.com/$APP_PRODUCTION.git
+      
+       # Push New Changes
+      - name: Push new changes to heroku
+        run: |
+          git push -f heroku main
