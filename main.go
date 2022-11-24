@@ -3,13 +3,29 @@ package main
 import (
 	"os"
 	"ourgym/config"
+	"ourgym/controllers"
+	"ourgym/databases"
+	"ourgym/middlewares"
+	"ourgym/repositories"
 	"ourgym/routes"
+	"ourgym/services"
 )
 
 func main() {
 	config.InitConfig()
+	db := databases.InitDatabase()
 
-	route := routes.InitRoute()
+	userRepo := repositories.NewUserRepository(db)
+	authService := services.NewAuthService(userRepo)
+	authController := controllers.NewAuthController(authService)
+
+	route := routes.ControllerList{
+		AuthController: *authController,
+	}
+
+	e := route.InitRoute()
+
+	middlewares.Logger(e)
 
 	port := os.Getenv("PORT")
 
@@ -17,5 +33,5 @@ func main() {
 		port = "8080"
 	}
 
-	route.Logger.Fatal(route.Start(":" + port))
+	e.Logger.Fatal(e.Start(":" + port))
 }
