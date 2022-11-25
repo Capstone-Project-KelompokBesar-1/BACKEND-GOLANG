@@ -43,7 +43,7 @@ func (ur *UserRepositoryImpl) Create(userRequest models.User) models.User {
 }
 
 func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.User {
-	user := ur.GetOneByFilter("id", id)
+	user := ur.GetOneByFilter("id", models.User{}.Name)
 
 	user.Name = userRequest.Name
 	user.Password = userRequest.Password
@@ -56,8 +56,8 @@ func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.
 	return user
 }
 
-func (ur *UserRepositoryImpl) Delete(id uint) bool {
-	user := ur.GetOneByFilter("id", id)
+func (ur *UserRepositoryImpl) Delete(id string) bool {
+	user := ur.GetOneByFilter("id", models.User{}.Name)
 
 	rec := ur.db.Delete(&user)
 

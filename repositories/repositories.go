@@ -7,5 +7,5 @@ type UserRepository interface {
 	GetOneByFilter(key string, value any) models.User
 	Create(userRequest models.User) models.User
 	Update(id string, userRequest models.User) models.User
-	Delete(id uint) bool
+	Delete(id string) bool
 }
