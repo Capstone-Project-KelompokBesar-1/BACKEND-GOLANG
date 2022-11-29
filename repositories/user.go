@@ -3,6 +3,8 @@ package repositories
 import (
 	"ourgym/models"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"gorm.io/gorm"
 )
 
@@ -19,7 +21,7 @@ type UserRepositoryImpl struct {
 func (ur *UserRepositoryImpl) GetAll() []models.User {
 	var users []models.User
 
-	ur.db.Find(&users, "isAdmin = ?", false)
+	ur.db.Find(&users)
 
 	return users
 }
@@ -35,6 +37,9 @@ func (ur *UserRepositoryImpl) GetOneByFilter(key string, value any) models.User 
 func (ur *UserRepositoryImpl) Create(userRequest models.User) models.User {
 	var user models.User
 
+	password, _ := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
+	userRequest.Password = string(password)
+
 	rec := ur.db.Create(&userRequest)
 
 	rec.Last(&user)
@@ -43,11 +48,14 @@ func (ur *UserRepositoryImpl) Create(userRequest models.User) models.User {
 }
 
 func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.User {
-	user := ur.GetOneByFilter("id", models.User{}.Name)
+	user := ur.GetOneByFilter("id", id)
 
 	user.Name = userRequest.Name
 	user.Password = userRequest.Password
 	user.Phone = userRequest.Phone
+
+	password, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(password)
 
 	rec := ur.db.Save(&user)
 
@@ -57,9 +65,9 @@ func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.
 }
 
 func (ur *UserRepositoryImpl) Delete(id string) bool {
-	user := ur.GetOneByFilter("id", models.User{}.Name)
+	user := ur.GetOneByFilter("id", id)
 
-	rec := ur.db.Delete(&user)
+	rec := ur.db.Unscoped().Delete(&user)
 
 	if rec.RowsAffected == 0 {
 		return false
