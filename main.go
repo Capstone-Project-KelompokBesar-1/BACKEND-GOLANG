@@ -4,6 +4,7 @@ import (
 	"os"
 	"ourgym/config"
 	"ourgym/controllers"
+	"ourgym/controllers/admin/manage/users"
 	"ourgym/databases"
 	"ourgym/middlewares"
 	"ourgym/repositories"
@@ -17,10 +18,13 @@ func main() {
 
 	userRepo := repositories.NewUserRepository(db)
 	authService := services.NewAuthService(userRepo)
+	userService := services.NewUserService(userRepo)
 	authController := controllers.NewAuthController(authService)
+	adminUserController := users.NewAdminUserController(userService)
 
 	route := routes.ControllerList{
-		AuthController: *authController,
+		AuthController:      *authController,
+		AdminUserController: *adminUserController,
 	}
 
 	e := route.InitRoute()

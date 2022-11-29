@@ -23,7 +23,7 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	admin.GET("", cl.AdminUserController.GetAll)
 	admin.GET("/:id/:name", cl.AdminUserController.GetOneByFilter)
 	admin.POST("", cl.AdminUserController.Create)
-	admin.PUT("", cl.AdminUserController.Update)
+	admin.PUT("/:id", cl.AdminUserController.Update)
 	admin.DELETE("/:id", cl.AdminUserController.Delete)
 
 	e.GET("", func(c echo.Context) error {
