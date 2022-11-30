@@ -2,8 +2,7 @@ package repositories
 
 import (
 	"ourgym/models"
-
-	"golang.org/x/crypto/bcrypt"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -18,10 +17,10 @@ type UserRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (ur *UserRepositoryImpl) GetAll() []models.User {
+func (ur *UserRepositoryImpl) GetAll(name string) []models.User {
 	var users []models.User
 
-	ur.db.Find(&users)
+	ur.db.Find(&users, "is_admin = ? && name LIKE ?", false, "%"+name+"%")
 
 	return users
 }
@@ -37,9 +36,6 @@ func (ur *UserRepositoryImpl) GetOneByFilter(key string, value any) models.User 
 func (ur *UserRepositoryImpl) Create(userRequest models.User) models.User {
 	var user models.User
 
-	password, _ := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
-	userRequest.Password = string(password)
-
 	rec := ur.db.Create(&userRequest)
 
 	rec.Last(&user)
@@ -53,9 +49,10 @@ func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.
 	user.Name = userRequest.Name
 	user.Password = userRequest.Password
 	user.Phone = userRequest.Phone
-
-	password, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	user.Password = string(password)
+	user.Address = userRequest.Address
+	user.Gender = userRequest.Gender
+	user.BirthDate = userRequest.BirthDate
+	user.Photo = userRequest.Photo
 
 	rec := ur.db.Save(&user)
 
@@ -65,9 +62,21 @@ func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.
 }
 
 func (ur *UserRepositoryImpl) Delete(id string) bool {
-	user := ur.GetOneByFilter("id", id)
+	user := ur.GetOneByFilter("id", models.User{}.Name)
 
-	rec := ur.db.Unscoped().Delete(&user)
+	rec := ur.db.Delete(&user)
+
+	if rec.RowsAffected == 0 {
+		return false
+	}
+
+	return true
+}
+
+func (ur *UserRepositoryImpl) DeleteMany(ids string) bool {
+	userIds := strings.Split(ids, ",")
+
+	rec := ur.db.Delete(&models.User{}, "id IN (?)", userIds)
 
 	if rec.RowsAffected == 0 {
 		return false
