@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"log"
 	"ourgym/models"
 	"strings"
 
@@ -78,8 +77,6 @@ func (ur *UserRepositoryImpl) DeleteMany(ids string) bool {
 	userIds := strings.Split(ids, ",")
 
 	rec := ur.db.Delete(&models.User{}, "id IN (?)", userIds)
-
-	log.Println(rec.RowsAffected)
 
 	if rec.RowsAffected == 0 {
 		return false
