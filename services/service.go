@@ -9,10 +9,11 @@ type AuthService interface {
 	Register(userRequest models.User) error
 }
 
-type UserServices interface {
-	GetAll() []models.User
-	GetOneByFilter(key string, value any) models.User
+type UserService interface {
+	GetAll(name string) []models.User
+	GetByID(id string) models.User
 	Create(userRequest models.User) models.User
 	Update(id string, userRequest models.User) models.User
 	Delete(id string) bool
+	DeleteMany(ids string) bool
 }

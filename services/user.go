@@ -5,32 +5,40 @@ import (
 	"ourgym/repositories"
 )
 
-type UserService struct {
-	userRepository repositories.UserRepository
-}
-
-func NewUserService(ur repositories.UserRepository) UserServices {
-	return &UserService{
+func NewUserService(ur repositories.UserRepository) UserService {
+	return &UserServiceImpl{
 		userRepository: ur,
 	}
 }
 
-func (u *UserService) GetAll() []models.User {
-	return u.userRepository.GetAll()
+type UserServiceImpl struct {
+	userRepository repositories.UserRepository
 }
 
-func (u *UserService) GetOneByFilter(key string, value any) models.User {
-	return u.userRepository.GetOneByFilter(key, value)
+func (u *UserServiceImpl) GetAll(name string) []models.User {
+	return u.userRepository.GetAll(name)
 }
 
-func (u *UserService) Create(userRequest models.User) models.User {
+func (u *UserServiceImpl) GetByID(id string) models.User {
+	return u.userRepository.GetOneByFilter("id", id)
+}
+
+func (u *UserServiceImpl) Create(userRequest models.User) models.User {
 	return u.userRepository.Create(userRequest)
 }
 
-func (u *UserService) Update(id string, userRequest models.User) models.User {
+func (u *UserServiceImpl) Update(id string, userRequest models.User) models.User {
 	return u.userRepository.Update(id, userRequest)
 }
 
-func (u *UserService) Delete(id string) bool {
+func (u *UserServiceImpl) UpdatePhoto(id string, userRequest models.User) models.User {
+	return u.userRepository.Update(id, userRequest)
+}
+
+func (u *UserServiceImpl) Delete(id string) bool {
 	return u.userRepository.Delete(id)
+}
+
+func (u *UserServiceImpl) DeleteMany(ids string) bool {
+	return u.userRepository.DeleteMany(ids)
 }
