@@ -1,8 +1,7 @@
-package user
+package controllers
 
 import (
 	"net/http"
-	"ourgym/controllers"
 	"ourgym/helpers"
 	"ourgym/models"
 	"ourgym/services"
@@ -31,7 +30,7 @@ func (uc *ProfileController) GetProfile(c echo.Context) error {
 
 	user := uc.userService.GetByID(userID)
 
-	return c.JSON(http.StatusOK, controllers.Response(http.StatusOK, "Success get profile", user.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success get profile", user.ConvertToDTO()))
 }
 
 func (uc *ProfileController) UpdateProfile(c echo.Context) error {
@@ -44,32 +43,32 @@ func (uc *ProfileController) UpdateProfile(c echo.Context) error {
 	input := models.User{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, controllers.Response(http.StatusBadRequest, "Failed to upload", map[string]any{}))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Failed to upload", map[string]any{}))
 	}
 
 	if err := input.Validate(); err != nil {
-		return c.JSON(http.StatusBadRequest, controllers.Response(http.StatusBadRequest, "Request invalid", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", ""))
 	}
 
 	user := uc.userService.Update(userId, input)
 
-	return c.JSON(http.StatusOK, controllers.Response(http.StatusOK, "Success update profile", user.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success update profile", user.ConvertToDTO()))
 }
 
 func (uc *ProfileController) UploadPhoto(c echo.Context) error {
 	photo, err := c.FormFile("photo")
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, controllers.Response(http.StatusBadRequest, "Failed to upload photo", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Failed to upload photo", ""))
 	}
 
-	photoUrl := helpers.UploadImage(photo)
+	photoUrl := helpers.UploadImage(photo, "pp")
 
 	if photoUrl == "" {
-		return c.JSON(http.StatusBadRequest, controllers.Response(http.StatusBadRequest, "Failed to upload photo", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Failed to upload photo", ""))
 	}
 
-	return c.JSON(http.StatusOK, controllers.Response(http.StatusOK, "Success upload photo", map[string]string{
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success upload photo", map[string]string{
 		"url_photo": photoUrl,
 	}))
 }

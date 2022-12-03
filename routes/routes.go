@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"ourgym/config"
 	"ourgym/controllers"
-	"ourgym/controllers/admin/manage/users"
-	"ourgym/controllers/user"
 	"ourgym/middlewares"
 
 	"github.com/labstack/echo/v4"
@@ -14,8 +12,9 @@ import (
 
 type ControllerList struct {
 	AuthController    controllers.AuthController
-	UserController    users.UserController
-	ProfileController user.ProfileController
+	UserController    controllers.UserController
+	ProfileController controllers.ProfileController
+	ClassController   controllers.ClassController
 }
 
 func (cl ControllerList) InitRoute() *echo.Echo {
@@ -48,6 +47,15 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	admin.PUT("/users/:id", cl.UserController.Update)
 	admin.DELETE("/users/:id", cl.UserController.Delete)
 	admin.DELETE("/users", cl.UserController.DeleteMany)
+
+	user.GET("/classes", cl.ClassController.GetAll)
+	user.GET("/classes/online", cl.ClassController.GetAllOnlineClass)
+	user.GET("/classes/offline", cl.ClassController.GetAllOfflineClass)
+	admin.GET("/classes/:id", cl.ClassController.GetByID)
+	admin.POST("/classes", cl.ClassController.Create)
+	admin.PUT("/classes/:id", cl.ClassController.Update)
+	admin.DELETE("/classes/:id", cl.ClassController.Delete)
+	admin.DELETE("/classes", cl.ClassController.DeleteMany)
 
 	e.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{
