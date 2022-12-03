@@ -10,7 +10,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func UploadImage(photo *multipart.FileHeader) string {
+func UploadImage(photo *multipart.FileHeader, folder string) string {
 	fileImage, _ := photo.Open()
 
 	config := &firebase.Config{
@@ -37,7 +37,7 @@ func UploadImage(photo *multipart.FileHeader) string {
 		return ""
 	}
 
-	wc := bucket.Object("pp/" + photo.Filename).NewWriter(cntx)
+	wc := bucket.Object(folder + "/" + photo.Filename).NewWriter(cntx)
 
 	if _, err = io.Copy(wc, fileImage); err != nil {
 		log.Println(err)
@@ -48,7 +48,7 @@ func UploadImage(photo *multipart.FileHeader) string {
 		return ""
 	}
 
-	url := "https://storage.cloud.google.com/movoo-66c7d.appspot.com/pp/" + photo.Filename
+	url := "https://storage.cloud.google.com/movoo-66c7d.appspot.com/" + folder + "/" + photo.Filename
 
 	return url
 }

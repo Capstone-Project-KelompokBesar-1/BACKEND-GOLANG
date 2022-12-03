@@ -17,3 +17,12 @@ type UserService interface {
 	Delete(id string) bool
 	DeleteMany(ids string) bool
 }
+
+type ClassService interface {
+	GetAll(classType string, name string) []models.Class
+	GetByID(id string) models.Class
+	Create(classRequest models.Class) models.Class
+	Update(id string, classRequest models.Class) models.Class
+	Delete(id string) bool
+	DeleteMany(ids string) bool
+}
