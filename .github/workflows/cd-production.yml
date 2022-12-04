@@ -55,4 +55,4 @@ jobs:
             sudo docker stop capstone-app
             sudo docker container rm capstone-app
             sudo docker pull andianugrahaqsa/capstone-alta:latest
-            sudo docker run -itd -p 80:8080 --name copstone-app andianugrahaqsa/capstone-alta:latest
+            sudo docker run -itd -p 80:8080 --name capstone-app andianugrahaqsa/capstone-alta:latest
