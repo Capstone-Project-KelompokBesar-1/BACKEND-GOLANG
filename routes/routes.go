@@ -30,7 +30,6 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 
 	user.GET("user/profile", cl.ProfileController.GetProfile)
 	user.PUT("user/profile", cl.ProfileController.UpdateProfile)
-	user.POST("/upload-photo", cl.ProfileController.UploadPhoto)
 	user.POST("/refresh-token", cl.AuthController.RefreshToken)
 
 	configAdmin := middleware.JWTConfig{

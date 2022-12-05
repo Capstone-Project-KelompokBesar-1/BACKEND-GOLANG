@@ -47,7 +47,6 @@ func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.
 	user := ur.GetOneByFilter("id", id)
 
 	user.Name = userRequest.Name
-	user.Password = userRequest.Password
 	user.Phone = userRequest.Phone
 	user.Address = userRequest.Address
 	user.Gender = userRequest.Gender
