@@ -62,7 +62,7 @@ func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.
 }
 
 func (ur *UserRepositoryImpl) Delete(id string) bool {
-	user := ur.GetOneByFilter("id", models.User{}.Name)
+	user := ur.GetOneByFilter("id", id)
 
 	rec := ur.db.Delete(&user)
 
