@@ -24,37 +24,39 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	e.POST("/login", cl.AuthController.Login)
 	e.POST("/register", cl.AuthController.Register)
 
-	user := e.Group("")
-
-	user.Use(middleware.JWT([]byte(cfg.JWT_SECRET_KEY)))
-
-	user.GET("user/profile", cl.ProfileController.GetProfile)
-	user.PUT("user/profile", cl.ProfileController.UpdateProfile)
-	user.POST("/refresh-token", cl.AuthController.RefreshToken)
-
 	configAdmin := middleware.JWTConfig{
 		KeyFunc: middlewares.GetJWTSecretKeyForAdmin,
 	}
 
-	admin := e.Group("")
+	adminJwtMiddleware := middleware.JWTWithConfig(configAdmin)
 
-	admin.Use(middleware.JWTWithConfig(configAdmin))
+	userJwtMiddleware := middleware.JWT([]byte(cfg.JWT_SECRET_KEY))
 
-	admin.GET("/users", cl.UserController.GetAll)
-	admin.GET("/users/:id", cl.UserController.GetOneByFilter)
-	admin.POST("/users", cl.UserController.Create)
-	admin.PUT("/users/:id", cl.UserController.Update)
-	admin.DELETE("/users/:id", cl.UserController.Delete)
-	admin.DELETE("/users", cl.UserController.DeleteMany)
+	user := e.Group("/user")
 
-	user.GET("/classes", cl.ClassController.GetAll)
-	user.GET("/classes/online", cl.ClassController.GetAllOnlineClass)
-	user.GET("/classes/offline", cl.ClassController.GetAllOfflineClass)
-	admin.GET("/classes/:id", cl.ClassController.GetByID)
-	admin.POST("/classes", cl.ClassController.Create)
-	admin.PUT("/classes/:id", cl.ClassController.Update)
-	admin.DELETE("/classes/:id", cl.ClassController.Delete)
-	admin.DELETE("/classes", cl.ClassController.DeleteMany)
+	user.GET("/profile", cl.ProfileController.GetProfile, userJwtMiddleware)
+	user.PUT("/profile", cl.ProfileController.UpdateProfile, userJwtMiddleware)
+	user.POST("user/refresh-token", cl.AuthController.RefreshToken, userJwtMiddleware)
+
+	users := e.Group("/users")
+
+	users.GET("", cl.UserController.GetAll, adminJwtMiddleware)
+	users.GET("/:id", cl.UserController.GetOneByFilter, adminJwtMiddleware)
+	users.POST("", cl.UserController.Create, adminJwtMiddleware)
+	users.PUT("/:id", cl.UserController.Update, adminJwtMiddleware)
+	users.DELETE("/:id", cl.UserController.Delete, adminJwtMiddleware)
+	users.DELETE("", cl.UserController.DeleteMany, adminJwtMiddleware)
+
+	classes := e.Group("/classes")
+
+	classes.GET("", cl.ClassController.GetAll, userJwtMiddleware)
+	classes.GET("/online", cl.ClassController.GetAllOnlineClass, userJwtMiddleware)
+	classes.GET("/offline", cl.ClassController.GetAllOfflineClass, userJwtMiddleware)
+	classes.GET("/:id", cl.ClassController.GetByID, userJwtMiddleware)
+	classes.POST("", cl.ClassController.Create, adminJwtMiddleware)
+	classes.PUT("/:id", cl.ClassController.Update, adminJwtMiddleware)
+	classes.DELETE("/:id", cl.ClassController.Delete, adminJwtMiddleware)
+	classes.DELETE("", cl.ClassController.DeleteMany, adminJwtMiddleware)
 
 	e.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{
