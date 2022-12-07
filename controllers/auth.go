@@ -51,3 +51,26 @@ func (ac *AuthController) Register(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "success registered user", map[string]any{}))
 }
+
+func (ac *AuthController) SendOTP(c echo.Context) error {
+	err := ac.authService.SendOTP(c.FormValue("email"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]any{
+			"code":    http.StatusBadRequest,
+			"message": fmt.Sprint(err),
+		})
+	}
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "OTP has been sended to email, Please check your email", map[string]any{}))
+}
+
+func (ac *AuthController) CreateNewPassword(c echo.Context) error {
+	err := ac.authService.CreateNewPassword(c.FormValue("otp"), c.FormValue("new_password"))
+	fmt.Println("Ini con : ", c.Get("user"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]any{
+			"code":    http.StatusBadRequest,
+			"message": fmt.Sprint(err),
+		})
+	}
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Password has been changed", map[string]any{}))
+}

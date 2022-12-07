@@ -16,7 +16,8 @@ func main() {
 	db := databases.InitDatabase()
 
 	userRepo := repositories.NewUserRepository(db)
-	authService := services.NewAuthService(userRepo)
+	otpRepo := repositories.NewOtpRepository(db)
+	authService := services.NewAuthService(userRepo, otpRepo)
 	authController := controllers.NewAuthController(authService)
 
 	route := routes.ControllerList{

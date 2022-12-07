@@ -16,6 +16,8 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 
 	e.POST("/login", cl.AuthController.Login)
 	e.POST("/register", cl.AuthController.Register)
+	e.POST("/send-otp", cl.AuthController.SendOTP)
+	e.POST("/forgot-password", cl.AuthController.CreateNewPassword)
 
 	e.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{
