@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ProfileController struct {
@@ -21,24 +22,20 @@ func NewProfileController(userService services.UserService) *ProfileController {
 	}
 }
 
-func (uc *ProfileController) GetProfile(c echo.Context) error {
+func (pc *ProfileController) GetProfile(c echo.Context) error {
 	userToken := c.Get("user").(*jwt.Token)
-	claims := userToken.Claims.(jwt.MapClaims)
 
-	userIdInt := int(claims["id"].(float64))
-	userID := strconv.Itoa(userIdInt)
+	userID := getUserIdFromToken(userToken)
 
-	user := uc.userService.GetByID(userID)
+	user := pc.userService.GetByID(userID)
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success get profile", user.ConvertToDTO()))
 }
 
-func (uc *ProfileController) UpdateProfile(c echo.Context) error {
+func (pc *ProfileController) UpdateProfile(c echo.Context) error {
 	userToken := c.Get("user").(*jwt.Token)
-	claims := userToken.Claims.(jwt.MapClaims)
 
-	userIdInt := int(claims["id"].(float64))
-	userId := strconv.Itoa(userIdInt)
+	userID := getUserIdFromToken(userToken)
 
 	input := models.User{}
 
@@ -59,7 +56,50 @@ func (uc *ProfileController) UpdateProfile(c echo.Context) error {
 		}
 	}
 
-	user := uc.userService.Update(userId, input)
+	user := pc.userService.Update(userID, input)
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success update profile", user.ConvertToDTO()))
+}
+
+func (pc *ProfileController) ChangePassword(c echo.Context) error {
+	userToken := c.Get("user").(*jwt.Token)
+
+	userID := getUserIdFromToken(userToken)
+
+	var passwords models.ChangePassword
+
+	if err := c.Bind(&passwords); err != nil {
+		return c.JSON(http.StatusNotFound, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
+
+	if err := passwords.Validate(); err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
+
+	user := pc.userService.GetByID(userID)
+
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passwords.OldPassword))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "old password invalid", nil))
+	}
+
+	newPassword, _ := bcrypt.GenerateFromPassword([]byte(passwords.NewPassword), bcrypt.DefaultCost)
+
+	isSuccess := pc.userService.ChangePassword(userID, string(newPassword))
+
+	if !isSuccess {
+		return c.JSON(http.StatusInternalServerError, Response(http.StatusInternalServerError, "failed to change password", nil))
+	}
+
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Successfully change password ", nil))
+}
+
+func getUserIdFromToken(userToken *jwt.Token) string {
+	claims := userToken.Claims.(jwt.MapClaims)
+
+	userIdInt := int(claims["id"].(float64))
+	userID := strconv.Itoa(userIdInt)
+
+	return userID
 }

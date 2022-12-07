@@ -33,7 +33,7 @@ func (uc *UserController) GetAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success Get Users", users))
 }
 
-func (uc *UserController) GetOneByFilter(c echo.Context) error {
+func (uc *UserController) GetByID(c echo.Context) error {
 	var id string = c.Param("id")
 
 	user := uc.userService.GetByID(id)

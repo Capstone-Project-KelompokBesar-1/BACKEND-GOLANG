@@ -23,12 +23,20 @@ func (u *UserServiceImpl) GetByID(id string) models.User {
 	return u.userRepository.GetOneByFilter("id", id)
 }
 
+func (u *UserServiceImpl) GetUserByEmail(email string) models.User {
+	return u.userRepository.GetOneByFilter("id", email)
+}
+
 func (u *UserServiceImpl) Create(userRequest models.User) models.User {
 	return u.userRepository.Create(userRequest)
 }
 
 func (u *UserServiceImpl) Update(id string, userRequest models.User) models.User {
 	return u.userRepository.Update(id, userRequest)
+}
+
+func (u *UserServiceImpl) ChangePassword(id string, newPassword string) bool {
+	return u.userRepository.ChangePassword(id, newPassword)
 }
 
 func (u *UserServiceImpl) UpdatePhoto(id string, userRequest models.User) models.User {

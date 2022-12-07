@@ -36,12 +36,13 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 
 	user.GET("/profile", cl.ProfileController.GetProfile, userJwtMiddleware)
 	user.PUT("/profile", cl.ProfileController.UpdateProfile, userJwtMiddleware)
+	user.PUT("/change-password", cl.ProfileController.ChangePassword, userJwtMiddleware)
 	user.POST("user/refresh-token", cl.AuthController.RefreshToken, userJwtMiddleware)
 
 	users := e.Group("/users")
 
 	users.GET("", cl.UserController.GetAll, adminJwtMiddleware)
-	users.GET("/:id", cl.UserController.GetOneByFilter, adminJwtMiddleware)
+	users.GET("/:id", cl.UserController.GetByID, adminJwtMiddleware)
 	users.POST("", cl.UserController.Create, adminJwtMiddleware)
 	users.PUT("/:id", cl.UserController.Update, adminJwtMiddleware)
 	users.DELETE("/:id", cl.UserController.Delete, adminJwtMiddleware)
