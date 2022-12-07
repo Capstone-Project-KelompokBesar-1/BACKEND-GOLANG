@@ -42,7 +42,7 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	users := e.Group("/users")
 
 	users.GET("", cl.UserController.GetAll, adminJwtMiddleware)
-	users.GET("/:id", cl.UserController.GetOneByFilter, adminJwtMiddleware)
+	users.GET("/:id", cl.UserController.GetByID, adminJwtMiddleware)
 	users.POST("", cl.UserController.Create, adminJwtMiddleware)
 	users.PUT("/:id", cl.UserController.Update, adminJwtMiddleware)
 	users.DELETE("/:id", cl.UserController.Delete, adminJwtMiddleware)
