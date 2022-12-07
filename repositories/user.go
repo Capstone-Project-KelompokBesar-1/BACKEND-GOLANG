@@ -60,6 +60,20 @@ func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.
 	return user
 }
 
+func (ur *UserRepositoryImpl) ChangePassword(id string, newPassword string) bool {
+	user := ur.GetOneByFilter("id", id)
+
+	user.Password = newPassword
+
+	rec := ur.db.Save(&user)
+
+	if rec.RowsAffected == 0 {
+		return false
+	}
+
+	return true
+}
+
 func (ur *UserRepositoryImpl) Delete(id string) bool {
 	user := ur.GetOneByFilter("id", id)
 

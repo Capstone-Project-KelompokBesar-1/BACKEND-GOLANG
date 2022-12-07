@@ -7,6 +7,10 @@ type response struct {
 }
 
 func Response(code int, message string, data interface{}) response {
+	if data == nil {
+		data = map[string]any{}
+	}
+
 	return response{
 		Code:    code,
 		Message: message,

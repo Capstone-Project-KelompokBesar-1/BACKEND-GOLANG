@@ -36,6 +36,7 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 
 	user.GET("/profile", cl.ProfileController.GetProfile, userJwtMiddleware)
 	user.PUT("/profile", cl.ProfileController.UpdateProfile, userJwtMiddleware)
+	user.PUT("/change-password", cl.ProfileController.ChangePassword, userJwtMiddleware)
 	user.POST("user/refresh-token", cl.AuthController.RefreshToken, userJwtMiddleware)
 
 	users := e.Group("/users")

@@ -14,6 +14,7 @@ type UserService interface {
 	GetByID(id string) models.User
 	Create(userRequest models.User) models.User
 	Update(id string, userRequest models.User) models.User
+	ChangePassword(id string, newPassword string) bool
 	Delete(id string) bool
 	DeleteMany(ids string) bool
 }
