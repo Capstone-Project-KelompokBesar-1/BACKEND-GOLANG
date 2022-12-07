@@ -28,11 +28,16 @@ func main() {
 
 	profileController := controllers.NewProfileController(userService)
 
+	trainerRepo := repositories.NewTrainerRepository(db)
+	trainerService := services.NewTrainerService(trainerRepo)
+	trainerController := controllers.NewTrainerController(trainerService)
+
 	route := routes.ControllerList{
 		AuthController:    *authController,
 		UserController:    *userController,
 		ProfileController: *profileController,
 		ClassController:   *classController,
+		TrainerController: *trainerController,
 	}
 
 	e := route.InitRoute()

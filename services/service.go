@@ -27,3 +27,8 @@ type ClassService interface {
 	Delete(id string) bool
 	DeleteMany(ids string) bool
 }
+
+type TrainerService interface {
+	GetAll(name string) []models.Trainer
+	GetByID(id string) models.Trainer
+}

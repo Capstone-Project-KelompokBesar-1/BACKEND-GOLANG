@@ -15,6 +15,7 @@ type ControllerList struct {
 	UserController    controllers.UserController
 	ProfileController controllers.ProfileController
 	ClassController   controllers.ClassController
+	TrainerController controllers.TrainerController
 }
 
 func (cl ControllerList) InitRoute() *echo.Echo {
@@ -58,6 +59,11 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	classes.PUT("/:id", cl.ClassController.Update, adminJwtMiddleware)
 	classes.DELETE("/:id", cl.ClassController.Delete, adminJwtMiddleware)
 	classes.DELETE("", cl.ClassController.DeleteMany, adminJwtMiddleware)
+
+	trainers := e.Group("/trainers")
+
+	trainers.GET("", cl.TrainerController.GetAll, userJwtMiddleware)
+	trainers.GET("/:id", cl.TrainerController.GetByID, userJwtMiddleware)
 
 	e.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{
