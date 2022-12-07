@@ -20,3 +20,8 @@ type ClassRepository interface {
 	Delete(id string) bool
 	DeleteMany(ids string) bool
 }
+
+type TrainerRepository interface {
+	GetAll(name string) []models.Trainer
+	GetByID(id string) models.Trainer
+}
