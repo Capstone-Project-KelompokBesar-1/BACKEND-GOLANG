@@ -1,7 +1,7 @@
 package services
 
 import (
-	"ourgym/models"
+	"ourgym/dto"
 	"ourgym/repositories"
 )
 
@@ -15,10 +15,19 @@ type TrainerServiceImpl struct {
 	trainerRepository repositories.TrainerRepository
 }
 
-func (ts *TrainerServiceImpl) GetAll(name string) []models.Trainer {
-	return ts.trainerRepository.GetAll(name)
+func (ts *TrainerServiceImpl) GetAll(name string) []dto.TrainerResponse {
+	trainers := ts.trainerRepository.GetAll(name)
+
+	var trainersResponse []dto.TrainerResponse
+
+	for _, trainer := range trainers {
+		trainersResponse = append(trainersResponse, trainer.ConvertToDTO())
+	}
+
+	return trainersResponse
 }
 
-func (ts *TrainerServiceImpl) GetByID(id string) models.Trainer {
-	return ts.trainerRepository.GetByID(id)
+func (ts *TrainerServiceImpl) GetByID(id string) dto.TrainerResponse {
+	trainer := ts.trainerRepository.GetByID(id)
+	return trainer.ConvertToDTO()
 }

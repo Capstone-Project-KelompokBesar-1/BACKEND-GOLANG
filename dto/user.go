@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type DTOUser struct {
+type UserResponse struct {
 	ID        uint      `json:"id"`
 	Name      string    `json:"name"`
 	Phone     string    `json:"phone"`

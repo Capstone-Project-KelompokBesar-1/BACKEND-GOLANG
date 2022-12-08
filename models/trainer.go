@@ -16,8 +16,8 @@ type Trainer struct {
 	UpdatedAt   time.Time `json:"updated_at" form:"updated_at"`
 }
 
-func (t Trainer) ConvertToDTO() dto.DTOTrainer {
-	return dto.DTOTrainer{
+func (t Trainer) ConvertToDTO() dto.TrainerResponse {
+	return dto.TrainerResponse{
 		ID:          t.ID,
 		Name:        t.Name,
 		Gender:      t.Gender,

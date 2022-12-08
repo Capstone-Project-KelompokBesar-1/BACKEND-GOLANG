@@ -1,6 +1,6 @@
 package dto
 
-type DTOTrainer struct {
+type TrainerResponse struct {
 	ID          uint   `json:"id"`
 	Name        string `json:"name"`
 	Gender      string `json:"gender"`
