@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"ourgym/dto"
 	"ourgym/helpers"
 	"ourgym/models"
 	"ourgym/services"
@@ -9,7 +11,6 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type ProfileController struct {
@@ -29,7 +30,7 @@ func (pc *ProfileController) GetProfile(c echo.Context) error {
 
 	user := pc.userService.GetByID(userID)
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success get profile", user.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success get profile", user))
 }
 
 func (pc *ProfileController) UpdateProfile(c echo.Context) error {
@@ -58,7 +59,7 @@ func (pc *ProfileController) UpdateProfile(c echo.Context) error {
 
 	user := pc.userService.Update(userID, input)
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success update profile", user.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success update profile", user))
 }
 
 func (pc *ProfileController) ChangePassword(c echo.Context) error {
@@ -66,30 +67,20 @@ func (pc *ProfileController) ChangePassword(c echo.Context) error {
 
 	userID := getUserIdFromToken(userToken)
 
-	var passwords models.ChangePassword
+	var passwords dto.ChangePasswordRequest
 
 	if err := c.Bind(&passwords); err != nil {
-		return c.JSON(http.StatusNotFound, Response(http.StatusBadRequest, "Request invalid", nil))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	if err := passwords.Validate(); err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
-	user := pc.userService.GetByID(userID)
-
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passwords.OldPassword))
+	err := pc.userService.ChangePassword(userID, passwords)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "old password invalid", nil))
-	}
-
-	newPassword, _ := bcrypt.GenerateFromPassword([]byte(passwords.NewPassword), bcrypt.DefaultCost)
-
-	isSuccess := pc.userService.ChangePassword(userID, string(newPassword))
-
-	if !isSuccess {
-		return c.JSON(http.StatusInternalServerError, Response(http.StatusInternalServerError, "failed to change password", nil))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, fmt.Sprint(err), nil))
 	}
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Successfully change password ", nil))

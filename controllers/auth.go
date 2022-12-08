@@ -29,10 +29,7 @@ func (ac *AuthController) Login(c echo.Context) error {
 	tokens, err := ac.authService.Login(userRequest)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
-			"code":    http.StatusBadRequest,
-			"message": fmt.Sprint(err),
-		})
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, fmt.Sprint(err), nil))
 	}
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "success logged in", tokens))

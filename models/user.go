@@ -22,8 +22,8 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at" form:"updated_at"`
 }
 
-func (u User) ConvertToDTO() dto.DTOUser {
-	return dto.DTOUser{
+func (u User) ConvertToDTO() dto.UserResponse {
+	return dto.UserResponse{
 		ID:        u.ID,
 		Name:      u.Name,
 		Phone:     u.Phone,

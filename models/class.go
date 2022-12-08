@@ -23,11 +23,11 @@ type Class struct {
 	UpdatedAt   time.Time `json:"updated_at" form:"updated_at"`
 }
 
-func (c Class) ConvertToDTO() dto.DTOClass {
-	return dto.DTOClass{
+func (c Class) ConvertToDTO() dto.ClassResponse {
+	return dto.ClassResponse{
 		ID:        c.ID,
 		TrainerID: c.TrainerID,
-		Trainer: dto.DTOTrainer{
+		Trainer: dto.TrainerResponse{
 			ID:          c.Trainer.ID,
 			Name:        c.Trainer.Name,
 			Gender:      c.Trainer.Gender,
@@ -36,7 +36,7 @@ func (c Class) ConvertToDTO() dto.DTOClass {
 			Description: c.Trainer.Description,
 		},
 		CategoryID: c.CategoryID,
-		Category: dto.DTOCategory{
+		Category: dto.CategoryResponse{
 			ID:   c.Category.ID,
 			Name: c.Category.Name,
 		},

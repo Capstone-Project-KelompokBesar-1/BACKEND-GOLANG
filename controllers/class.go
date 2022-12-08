@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"ourgym/dto"
 	"ourgym/helpers"
 	"ourgym/models"
 	"ourgym/services"
@@ -23,13 +22,7 @@ func NewClassController(classService services.ClassService) *ClassController {
 func (uc *ClassController) GetAll(c echo.Context) error {
 	name := c.QueryParam("name")
 
-	classData := uc.classService.GetAll("", name)
-
-	classes := []dto.DTOClass{}
-
-	for _, class := range classData {
-		classes = append(classes, class.ConvertToDTO())
-	}
+	classes := uc.classService.GetAll("", name)
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success get classes", classes))
 }
@@ -37,13 +30,7 @@ func (uc *ClassController) GetAll(c echo.Context) error {
 func (uc *ClassController) GetAllOnlineClass(c echo.Context) error {
 	name := c.QueryParam("name")
 
-	classData := uc.classService.GetAll("online", name)
-
-	classes := []dto.DTOClass{}
-
-	for _, class := range classData {
-		classes = append(classes, class.ConvertToDTO())
-	}
+	classes := uc.classService.GetAll("online", name)
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success get online classes", classes))
 }
@@ -51,13 +38,7 @@ func (uc *ClassController) GetAllOnlineClass(c echo.Context) error {
 func (uc *ClassController) GetAllOfflineClass(c echo.Context) error {
 	name := c.QueryParam("name")
 
-	classData := uc.classService.GetAll("offline", name)
-
-	classes := []dto.DTOClass{}
-
-	for _, class := range classData {
-		classes = append(classes, class.ConvertToDTO())
-	}
+	classes := uc.classService.GetAll("offline", name)
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success get offline classes", classes))
 }
@@ -68,21 +49,21 @@ func (uc *ClassController) GetByID(c echo.Context) error {
 	class := uc.classService.GetByID(id)
 
 	if class.ID == 0 {
-		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Class Not Found", ""))
+		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Class Not Found", nil))
 	}
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Class Found", class.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Class Found", class))
 }
 
 func (uc *ClassController) Create(c echo.Context) error {
 	input := models.Class{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Failed", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	if err := input.Validate(); err != nil {
-		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	thumbnail, err := c.FormFile("thumbnail")
@@ -96,18 +77,18 @@ func (uc *ClassController) Create(c echo.Context) error {
 
 	class := uc.classService.Create(input)
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success create class", class.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success create class", class))
 }
 
 func (uc *ClassController) Update(c echo.Context) error {
 	input := models.Class{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusNotFound, Response(http.StatusBadRequest, "Failed", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	if err := input.Validate(); err != nil {
-		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	thumbnail, err := c.FormFile("thumbnail")
@@ -123,7 +104,7 @@ func (uc *ClassController) Update(c echo.Context) error {
 
 	class := uc.classService.Update(classId, input)
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success Update Class", class.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success Update Class", class))
 }
 
 func (uc *ClassController) Delete(c echo.Context) error {
@@ -132,10 +113,10 @@ func (uc *ClassController) Delete(c echo.Context) error {
 	isSuccess := uc.classService.Delete(classId)
 
 	if !isSuccess {
-		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Class Not Found", ""))
+		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Class Not Found", nil))
 	}
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Class Success Deleted", ""))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Class Success Deleted", nil))
 }
 
 func (uc *ClassController) DeleteMany(c echo.Context) error {
@@ -144,8 +125,8 @@ func (uc *ClassController) DeleteMany(c echo.Context) error {
 	isSuccess := uc.classService.DeleteMany(ids)
 
 	if !isSuccess {
-		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Classes Not Found", ""))
+		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Classes Not Found", nil))
 	}
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Classes Success Deleted", ""))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Classes Success Deleted", nil))
 }

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"ourgym/dto"
 	"ourgym/models"
 )
 
@@ -10,25 +11,25 @@ type AuthService interface {
 }
 
 type UserService interface {
-	GetAll(name string) []models.User
-	GetByID(id string) models.User
-	Create(userRequest models.User) models.User
-	Update(id string, userRequest models.User) models.User
-	ChangePassword(id string, newPassword string) bool
+	GetAll(name string) []dto.UserResponse
+	GetByID(id string) dto.UserResponse
+	Create(userRequest models.User) dto.UserResponse
+	Update(id string, userRequest models.User) dto.UserResponse
+	ChangePassword(id string, passwords dto.ChangePasswordRequest) error
 	Delete(id string) bool
 	DeleteMany(ids string) bool
 }
 
 type ClassService interface {
-	GetAll(classType string, name string) []models.Class
-	GetByID(id string) models.Class
-	Create(classRequest models.Class) models.Class
-	Update(id string, classRequest models.Class) models.Class
+	GetAll(classType string, name string) []dto.ClassResponse
+	GetByID(id string) dto.ClassResponse
+	Create(classRequest models.Class) dto.ClassResponse
+	Update(id string, classRequest models.Class) dto.ClassResponse
 	Delete(id string) bool
 	DeleteMany(ids string) bool
 }
 
 type TrainerService interface {
-	GetAll(name string) []models.Trainer
-	GetByID(id string) models.Trainer
+	GetAll(name string) []dto.TrainerResponse
+	GetByID(id string) dto.TrainerResponse
 }

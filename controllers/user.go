@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"ourgym/dto"
 	"ourgym/models"
 	"ourgym/services"
 
@@ -22,13 +21,7 @@ func NewUserController(userService services.UserService) *UserController {
 func (uc *UserController) GetAll(c echo.Context) error {
 	name := c.QueryParam("name")
 
-	usersData := uc.userService.GetAll(name)
-
-	users := []dto.DTOUser{}
-
-	for _, user := range usersData {
-		users = append(users, user.ConvertToDTO())
-	}
+	users := uc.userService.GetAll(name)
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success Get Users", users))
 }
@@ -39,21 +32,21 @@ func (uc *UserController) GetByID(c echo.Context) error {
 	user := uc.userService.GetByID(id)
 
 	if user.ID == 0 {
-		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "User Not Found", ""))
+		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "User Not Found", nil))
 	}
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "User Found", user.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "User Found", user))
 }
 
 func (uc *UserController) Create(c echo.Context) error {
 	input := models.User{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Failed", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	if err := input.Validate(); err != nil {
-		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	user := uc.userService.Create(input)
@@ -65,18 +58,18 @@ func (uc *UserController) Update(c echo.Context) error {
 	input := models.User{}
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusNotFound, Response(http.StatusBadRequest, "Failed", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	if err := input.Validate(); err != nil {
-		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", ""))
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
 	var userId string = c.Param("id")
 
 	user := uc.userService.Update(userId, input)
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success Update User", user.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success Update User", user))
 }
 
 func (uc *UserController) Delete(c echo.Context) error {
@@ -85,10 +78,10 @@ func (uc *UserController) Delete(c echo.Context) error {
 	isSuccess := uc.userService.Delete(userId)
 
 	if !isSuccess {
-		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "User Not Found", ""))
+		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "User Not Found", nil))
 	}
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "User Success Deleted", ""))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "User Success Deleted", nil))
 }
 
 func (uc *UserController) DeleteMany(c echo.Context) error {
@@ -97,8 +90,8 @@ func (uc *UserController) DeleteMany(c echo.Context) error {
 	isSuccess := uc.userService.DeleteMany(ids)
 
 	if !isSuccess {
-		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Users Not Found", ""))
+		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Users Not Found", nil))
 	}
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Users Success Deleted", ""))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Users Success Deleted", nil))
 }

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"ourgym/dto"
 	"ourgym/services"
 
 	"github.com/labstack/echo/v4"
@@ -21,16 +20,10 @@ func NewTrainerController(trainerService services.TrainerService) *TrainerContro
 func (tc *TrainerController) GetAll(c echo.Context) error {
 	name := c.QueryParam("name")
 
-	trainersData := tc.trainerService.GetAll(name)
+	trainers := tc.trainerService.GetAll(name)
 
-	if len(trainersData) == 0 {
+	if len(trainers) == 0 {
 		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Trainers Not Found", nil))
-	}
-
-	trainers := []dto.DTOTrainer{}
-
-	for _, trainer := range trainersData {
-		trainers = append(trainers, trainer.ConvertToDTO())
 	}
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success Get Trainers", trainers))
@@ -45,5 +38,5 @@ func (tc *TrainerController) GetByID(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "Trainer Not Found", nil))
 	}
 
-	return c.JSON(http.StatusOK, Response(http.StatusOK, "Trainer Found", trainer.ConvertToDTO()))
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "Trainer Found", trainer))
 }
