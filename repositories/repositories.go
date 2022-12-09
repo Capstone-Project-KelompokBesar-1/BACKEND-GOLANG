@@ -12,4 +12,5 @@ type UserRepository interface {
 
 type OtpRepository interface {
 	GetOneByFilter(key string, value any) models.Otp
+	Delete(id uint) bool
 }

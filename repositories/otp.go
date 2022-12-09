@@ -22,3 +22,15 @@ func (otpR *OtpRepositoryImpl) GetOneByFilter(key string, value any) models.Otp 
 
 	return otp
 }
+
+func (otpR *OtpRepositoryImpl) Delete(id uint) bool {
+	otp := otpR.GetOneByFilter("id", id)
+
+	rec := otpR.db.Delete(&otp)
+
+	if rec.RowsAffected == 0 {
+		return false
+	}
+
+	return true
+}

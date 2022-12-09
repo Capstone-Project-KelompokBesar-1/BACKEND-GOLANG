@@ -64,7 +64,7 @@ func (ac *AuthController) SendOTP(c echo.Context) error {
 }
 
 func (ac *AuthController) CreateNewPassword(c echo.Context) error {
-	err := ac.authService.CreateNewPassword(c.FormValue("otp"), c.FormValue("new_password"))
+	err := ac.authService.CreateNewPassword(c.FormValue("code_otp"), c.FormValue("new_password"))
 	fmt.Println("Ini con : ", c.Get("user"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]any{

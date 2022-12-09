@@ -105,10 +105,12 @@ func (as *AuthServiceImpl) SendOTP(email string) error {
 func (as *AuthServiceImpl) CreateNewPassword(otp, new_password string) error {
 
 	oo := as.otpRepo.GetOneByFilter("code", otp)
-	user := as.userRepo.GetOneByFilter("id", oo.ID)
-	id := strconv.Itoa(user.ID)
+	user := as.userRepo.GetOneByFilter("id", oo.User)
+	id := strconv.Itoa(int(user.ID))
+	password, _ := bcrypt.GenerateFromPassword([]byte(new_password), bcrypt.DefaultCost)
+	user.Password = string(password)
 	as.userRepo.Update(id, user)
-	fmt.Println(user)
-	fmt.Println(oo)
+	as.otpRepo.Delete(oo.ID)
+
 	return nil
 }
