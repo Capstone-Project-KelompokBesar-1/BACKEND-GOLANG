@@ -30,6 +30,8 @@ func InitDatabase() *gorm.DB {
 		&models.User{},
 		&models.Profile{},
 		&models.Otp{},
+		&models.Class{},
+		&models.Trainer{},
 	)
 
 	return db
