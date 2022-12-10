@@ -16,6 +16,10 @@ func main() {
 	db := databases.InitDatabase()
 
 	userRepo := repositories.NewUserRepository(db)
+  
+	otpRepo := repositories.NewOtpRepository(db)
+	authService := services.NewAuthService(userRepo, otpRepo)
+  
 	userService := services.NewUserService(userRepo)
 	userController := controllers.NewUserController(userService)
 
@@ -23,7 +27,6 @@ func main() {
 	classService := services.NewClassService(classRepo)
 	classController := controllers.NewClassController(classService)
 
-	authService := services.NewAuthService(userRepo)
 	authController := controllers.NewAuthController(authService)
 
 	profileController := controllers.NewProfileController(userService)

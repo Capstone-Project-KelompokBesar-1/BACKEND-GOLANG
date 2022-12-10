@@ -25,3 +25,8 @@ type TrainerRepository interface {
 	GetAll(name string) []models.Trainer
 	GetByID(id string) models.Trainer
 }
+
+type OtpRepository interface {
+	GetOneByFilter(key string, value any) models.Otp
+	Delete(id uint) bool
+}

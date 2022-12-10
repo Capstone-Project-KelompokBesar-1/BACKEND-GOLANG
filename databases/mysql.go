@@ -28,6 +28,7 @@ func InitDatabase() *gorm.DB {
 
 	db.AutoMigrate(
 		&models.User{},
+		&models.Otp{},
 		&models.Class{},
 		&models.Trainer{},
 	)

@@ -24,6 +24,8 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 
 	e.POST("/login", cl.AuthController.Login)
 	e.POST("/register", cl.AuthController.Register)
+	e.POST("/send-otp", cl.AuthController.SendOTP)
+	e.POST("/forgot-password", cl.AuthController.CreateNewPassword)
 
 	configAdmin := middleware.JWTConfig{
 		KeyFunc: middlewares.GetJWTSecretKeyForAdmin,
