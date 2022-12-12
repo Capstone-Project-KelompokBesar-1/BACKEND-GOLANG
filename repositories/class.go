@@ -58,6 +58,8 @@ func (ur *ClassRepositoryImpl) Update(id string, classRequest models.Class) mode
 	class.Description = classRequest.Description
 	class.Type = classRequest.Type
 	class.Category.ID = classRequest.CategoryID
+	class.Price = classRequest.Price
+	class.TotalMeeting = classRequest.TotalMeeting
 
 	rec := ur.db.Save(&class)
 
