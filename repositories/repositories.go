@@ -1,6 +1,10 @@
 package repositories
 
-import "ourgym/models"
+import (
+	"ourgym/models"
+
+	"github.com/midtrans/midtrans-go/snap"
+)
 
 type UserRepository interface {
 	GetAll(name string) []models.User
@@ -24,6 +28,23 @@ type ClassRepository interface {
 type TrainerRepository interface {
 	GetAll(name string) []models.Trainer
 	GetByID(id string) models.Trainer
+}
+
+type PaymentMethodRepository interface {
+	GetAll() []models.PaymentMethod
+	GetByID(id string) models.PaymentMethod
+}
+
+type TransactionRepository interface {
+	GetAll() []models.Transaction
+	GetHistory() []models.Transaction
+	GetByUserID(userID string) []models.Transaction
+	GetByID(id string) models.Transaction
+	Create(classRequest models.Transaction) (snap.Response, error)
+	UpdatedByMidtransAPI(transactionRequest models.Transaction) error
+	Update(id string, userRequest models.Transaction) models.Transaction
+	Delete(id string) bool
+	DeleteMany(ids string) bool
 }
 
 type OtpRepository interface {

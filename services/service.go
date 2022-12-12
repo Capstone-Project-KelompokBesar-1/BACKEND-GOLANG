@@ -3,6 +3,8 @@ package services
 import (
 	"ourgym/dto"
 	"ourgym/models"
+
+	"github.com/midtrans/midtrans-go/snap"
 )
 
 type AuthService interface {
@@ -29,6 +31,23 @@ type ClassService interface {
 	Update(id string, classRequest models.Class) dto.ClassResponse
 	Delete(id string) bool
 	DeleteMany(ids string) bool
+}
+
+type TransactionService interface {
+	GetAll() []dto.TransactionResponse
+	GetHistory() []dto.TransactionResponse
+	GetByUserID(userID string) []dto.TransactionResponse
+	GetByID(id string) dto.TransactionResponse
+	Create(transactionRequest dto.TransactionRequest) (snap.Response, error)
+	UpdatedByMidtransAPI(midtransTransaction dto.MidtransTransactionRequest) error
+	Update(id string, transactionRequest dto.TransactionRequest) dto.TransactionResponse
+	Delete(id string) bool
+	DeleteMany(ids string) bool
+}
+
+type PaymentMethodService interface {
+	GetAll() []dto.PaymentMethodResponse
+	GetByID(id string) dto.PaymentMethodResponse
 }
 
 type TrainerService interface {
