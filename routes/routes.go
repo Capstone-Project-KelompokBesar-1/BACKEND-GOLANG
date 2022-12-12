@@ -80,7 +80,7 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	transactions.GET("/user/:id", cl.TransactionController.GetByUserID, userJwtMiddleware)
 	transactions.GET("/:id", cl.TransactionController.GetByID, userJwtMiddleware)
 	transactions.POST("", cl.TransactionController.Create, userJwtMiddleware)
-	transactions.POST("/midtrans-api", cl.TransactionController.UpdatedByMidtransAPI, userJwtMiddleware)
+	transactions.POST("/midtrans-api", cl.TransactionController.UpdatedByMidtransAPI)
 	transactions.PUT("/:id", cl.TransactionController.Update, adminJwtMiddleware)
 	transactions.DELETE("/:id", cl.TransactionController.Delete, adminJwtMiddleware)
 	transactions.DELETE("", cl.TransactionController.DeleteMany, adminJwtMiddleware)
