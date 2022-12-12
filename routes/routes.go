@@ -11,11 +11,13 @@ import (
 )
 
 type ControllerList struct {
-	AuthController    controllers.AuthController
-	UserController    controllers.UserController
-	ProfileController controllers.ProfileController
-	ClassController   controllers.ClassController
-	TrainerController controllers.TrainerController
+	AuthController          controllers.AuthController
+	UserController          controllers.UserController
+	ProfileController       controllers.ProfileController
+	ClassController         controllers.ClassController
+	TrainerController       controllers.TrainerController
+	TransactionController   controllers.TransactionController
+	PaymentMethodController controllers.PaymentMethodController
 }
 
 func (cl ControllerList) InitRoute() *echo.Echo {
@@ -66,6 +68,22 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 
 	trainers.GET("", cl.TrainerController.GetAll, userJwtMiddleware)
 	trainers.GET("/:id", cl.TrainerController.GetByID, userJwtMiddleware)
+
+	paymentMethods := e.Group("/payment-methods")
+
+	paymentMethods.GET("", cl.PaymentMethodController.GetAll, userJwtMiddleware)
+	paymentMethods.GET("/:id", cl.PaymentMethodController.GetByID, userJwtMiddleware)
+
+	transactions := e.Group("/transactions")
+	transactions.GET("", cl.TransactionController.GetAll, adminJwtMiddleware)
+	transactions.GET("/history", cl.TransactionController.GetHistory, adminJwtMiddleware)
+	transactions.GET("/user/:id", cl.TransactionController.GetByUserID, userJwtMiddleware)
+	transactions.GET("/:id", cl.TransactionController.GetByID, userJwtMiddleware)
+	transactions.POST("", cl.TransactionController.Create, userJwtMiddleware)
+	transactions.POST("/midtrans-api", cl.TransactionController.UpdatedByMidtransAPI, userJwtMiddleware)
+	transactions.PUT("/:id", cl.TransactionController.Update, adminJwtMiddleware)
+	transactions.DELETE("/:id", cl.TransactionController.Delete, adminJwtMiddleware)
+	transactions.DELETE("", cl.TransactionController.DeleteMany, adminJwtMiddleware)
 
 	e.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{

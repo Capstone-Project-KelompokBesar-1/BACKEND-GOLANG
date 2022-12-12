@@ -31,6 +31,8 @@ func InitDatabase() *gorm.DB {
 		&models.Otp{},
 		&models.Class{},
 		&models.Trainer{},
+		&models.PaymentMethod{},
+		&models.Transaction{},
 	)
 
 	return db

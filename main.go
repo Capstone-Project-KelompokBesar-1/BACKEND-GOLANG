@@ -15,32 +15,36 @@ func main() {
 	config.InitConfig()
 	db := databases.InitDatabase()
 
-	userRepo := repositories.NewUserRepository(db)
-  
-	otpRepo := repositories.NewOtpRepository(db)
-	authService := services.NewAuthService(userRepo, otpRepo)
-  
-	userService := services.NewUserService(userRepo)
-	userController := controllers.NewUserController(userService)
-
 	classRepo := repositories.NewClassRepository(db)
+	otpRepo := repositories.NewOtpRepository(db)
+	paymentMethodRepo := repositories.NewPaymentMethodRepository(db)
+	trainerRepo := repositories.NewTrainerRepository(db)
+	userRepo := repositories.NewUserRepository(db)
+	transactionRepo := repositories.NewTransactionRepository(db, userRepo, paymentMethodRepo)
+
+	authService := services.NewAuthService(userRepo, otpRepo)
 	classService := services.NewClassService(classRepo)
-	classController := controllers.NewClassController(classService)
+	paymentMethodService := services.NewPaymentMethodService(paymentMethodRepo)
+	trainerService := services.NewTrainerService(trainerRepo)
+	transactionService := services.NewTransactionService(transactionRepo)
+	userService := services.NewUserService(userRepo)
 
 	authController := controllers.NewAuthController(authService)
-
+	classController := controllers.NewClassController(classService)
 	profileController := controllers.NewProfileController(userService)
-
-	trainerRepo := repositories.NewTrainerRepository(db)
-	trainerService := services.NewTrainerService(trainerRepo)
+	paymentMethodController := controllers.NewPaymentMethodController(paymentMethodService)
 	trainerController := controllers.NewTrainerController(trainerService)
+	transactionController := controllers.NewTransactionController(transactionService)
+	userController := controllers.NewUserController(userService)
 
 	route := routes.ControllerList{
-		AuthController:    *authController,
-		UserController:    *userController,
-		ProfileController: *profileController,
-		ClassController:   *classController,
-		TrainerController: *trainerController,
+		AuthController:          *authController,
+		UserController:          *userController,
+		ProfileController:       *profileController,
+		ClassController:         *classController,
+		TrainerController:       *trainerController,
+		TransactionController:   *transactionController,
+		PaymentMethodController: *paymentMethodController,
 	}
 
 	e := route.InitRoute()
