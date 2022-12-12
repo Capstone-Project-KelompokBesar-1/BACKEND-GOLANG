@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"net/http"
+	"ourgym/dto"
 	"ourgym/helpers"
-	"ourgym/models"
 	"ourgym/services"
 
 	"github.com/labstack/echo/v4"
@@ -56,7 +56,7 @@ func (uc *ClassController) GetByID(c echo.Context) error {
 }
 
 func (uc *ClassController) Create(c echo.Context) error {
-	input := models.Class{}
+	input := dto.ClassRequest{}
 
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
@@ -81,7 +81,7 @@ func (uc *ClassController) Create(c echo.Context) error {
 }
 
 func (uc *ClassController) Update(c echo.Context) error {
-	input := models.Class{}
+	input := dto.ClassRequest{}
 
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))

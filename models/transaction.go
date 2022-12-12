@@ -6,17 +6,17 @@ import (
 )
 
 type Transaction struct {
-	ID              string        `json:"id" form:"id" gorm:"primaryKey"`
-	UserID          uint          `json:"user_id" form:"user_id" validate:"required"`
-	User            User          `json:"user" form:"user"`
-	ClassID         uint          `json:"class_id" form:"class_id" validate:"required"`
-	Class           Class         `json:"class" form:"class"`
-	PaymentMethodID uint          `json:"payment_method_id" form:"payment_method_id" validate:"required"`
-	PaymentMethod   PaymentMethod `json:"payment_method" form:"payment_method"`
-	Amount          int           `json:"amount" form:"amount" validate:"required"`
-	Status          string        `json:"status" form:"status"`
-	CreatedAt       time.Time     `json:"created_at" form:"created_at"`
-	UpdatedAt       time.Time     `json:"updated_at" form:"updated_at"`
+	ID              string `gorm:"primaryKey"`
+	UserID          uint
+	User            User
+	ClassID         uint
+	Class           Class
+	PaymentMethodID uint
+	PaymentMethod   PaymentMethod
+	Amount          int
+	Status          string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
 }
 
 func (t Transaction) ConvertToDTO() dto.TransactionResponse {

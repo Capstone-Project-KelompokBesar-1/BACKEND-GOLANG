@@ -33,18 +33,15 @@ func (cs *ClassServiceImpl) GetByID(id string) dto.ClassResponse {
 	return class.ConvertToDTO()
 }
 
-func (cs *ClassServiceImpl) Create(classRequest models.Class) dto.ClassResponse {
-	class := cs.classRepository.Create(classRequest)
+func (cs *ClassServiceImpl) Create(classRequest dto.ClassRequest) dto.ClassResponse {
+	classModel := models.FromClassRequestToClassModel(classRequest)
+	class := cs.classRepository.Create(classModel)
 	return class.ConvertToDTO()
 }
 
-func (cs *ClassServiceImpl) Update(id string, classRequest models.Class) dto.ClassResponse {
-	class := cs.classRepository.Update(id, classRequest)
-	return class.ConvertToDTO()
-}
-
-func (cs *ClassServiceImpl) UpdatePhoto(id string, classRequest models.Class) dto.ClassResponse {
-	class := cs.classRepository.Update(id, classRequest)
+func (cs *ClassServiceImpl) Update(id string, classRequest dto.ClassRequest) dto.ClassResponse {
+	classModel := models.FromClassRequestToClassModel(classRequest)
+	class := cs.classRepository.Update(id, classModel)
 	return class.ConvertToDTO()
 }
 

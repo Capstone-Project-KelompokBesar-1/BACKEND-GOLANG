@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"net/http"
-	"ourgym/models"
+	"ourgym/dto"
 	"ourgym/services"
 
 	"github.com/labstack/echo/v4"
@@ -39,9 +39,9 @@ func (uc *UserController) GetByID(c echo.Context) error {
 }
 
 func (uc *UserController) Create(c echo.Context) error {
-	input := models.User{}
+	input := dto.UserRequest{}
 
-	if err := c.Bind(&input); err != nil {
+	if err := c.Bind(&input); err != nil || input.Password == "" {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
@@ -55,7 +55,7 @@ func (uc *UserController) Create(c echo.Context) error {
 }
 
 func (uc *UserController) Update(c echo.Context) error {
-	input := models.User{}
+	input := dto.UserRequest{}
 
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))

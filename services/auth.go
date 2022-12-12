@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/smtp"
 	"ourgym/databases"
+	"ourgym/dto"
 	"ourgym/middlewares"
 	"ourgym/models"
 	"ourgym/repositories"
@@ -27,14 +28,14 @@ type AuthServiceImpl struct {
 	otpRepo  repositories.OtpRepository
 }
 
-func (as *AuthServiceImpl) Login(userRequest models.User) (map[string]string, error) {
-	user := as.userRepo.GetOneByFilter("email", userRequest.Email)
+func (as *AuthServiceImpl) Login(loginRequest dto.LoginRequest) (map[string]string, error) {
+	user := as.userRepo.GetOneByFilter("email", loginRequest.Email)
 
 	if user.ID == 0 {
 		return map[string]string{}, errors.New("email hasn't been registered")
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userRequest.Password))
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequest.Password))
 
 	if err != nil {
 		return map[string]string{}, errors.New("password invalid")
@@ -49,19 +50,22 @@ func (as *AuthServiceImpl) Login(userRequest models.User) (map[string]string, er
 	}, nil
 }
 
-func (as *AuthServiceImpl) Register(userRequest models.User) error {
+func (as *AuthServiceImpl) Register(userRequest dto.UserRequest) error {
 	user := as.userRepo.GetOneByFilter("email", userRequest.Email)
 
 	if userRequest.Email == user.Email {
 		return errors.New("email has been registered")
 	}
 
+	userModel := models.FromUserRequestToUserModel(userRequest)
+
 	password, _ := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 
-	userRequest.Password = string(password)
-	userRequest.IsAdmin = false
+	userModel.Password = string(password)
 
-	user = as.userRepo.Create(userRequest)
+	userModel.IsAdmin = false
+
+	user = as.userRepo.Create(userModel)
 
 	return nil
 }

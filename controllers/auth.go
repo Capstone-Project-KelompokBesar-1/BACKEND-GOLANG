@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"ourgym/dto"
 	"ourgym/middlewares"
 	"ourgym/models"
 	"ourgym/services"
@@ -22,11 +23,15 @@ type AuthController struct {
 }
 
 func (ac *AuthController) Login(c echo.Context) error {
-	var userRequest models.User
+	var loginRequest dto.LoginRequest
 
-	c.Bind(&userRequest)
+	c.Bind(&loginRequest)
 
-	tokens, err := ac.authService.Login(userRequest)
+	if err := loginRequest.Validate(); err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
+
+	tokens, err := ac.authService.Login(loginRequest)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, fmt.Sprint(err), nil))
@@ -36,9 +41,13 @@ func (ac *AuthController) Login(c echo.Context) error {
 }
 
 func (ac *AuthController) Register(c echo.Context) error {
-	var userRequest models.User
+	var userRequest dto.UserRequest
 
 	c.Bind(&userRequest)
+
+	if err := userRequest.Validate(); err != nil || userRequest.Password == "" {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
 
 	err := ac.authService.Register(userRequest)
 	if err != nil {

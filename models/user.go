@@ -8,18 +8,18 @@ import (
 )
 
 type User struct {
-	ID        uint      `json:"id" form:"id" gorm:"primaryKey"`
-	Name      string    `json:"name" form:"name" validate:"required"`
-	Phone     string    `json:"phone" form:"phone" validate:"required"`
-	Email     string    `json:"email" form:"email" validate:"required,email"`
-	Password  string    `json:"password" form:"password"`
-	Address   string    `json:"address" form:"address"`
-	Gender    string    `json:"gender" form:"gender"`
-	BirthDate time.Time `json:"birth_date" form:"birth_date"`
-	Photo     string    `json:"photo" form:"photo"`
-	IsAdmin   bool      `json:"is_admin" form:"is_admin"`
-	CreatedAt time.Time `json:"created_at" form:"created_at"`
-	UpdatedAt time.Time `json:"updated_at" form:"updated_at"`
+	ID        uint `gorm:"primaryKey"`
+	Name      string
+	Phone     string
+	Email     string
+	Password  string
+	Address   string
+	Gender    string
+	BirthDate time.Time
+	Photo     string
+	IsAdmin   bool
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (u User) ConvertToDTO() dto.UserResponse {
@@ -42,4 +42,17 @@ func (u *User) Validate() error {
 	err := validate.Struct(u)
 
 	return err
+}
+
+func FromUserRequestToUserModel(request dto.UserRequest) User {
+	return User{
+		Name:      request.Name,
+		Phone:     request.Phone,
+		Email:     request.Email,
+		Password:  request.Password,
+		Address:   request.Address,
+		Gender:    request.Gender,
+		BirthDate: request.BirthDate,
+		Photo:     request.Photo,
+	}
 }

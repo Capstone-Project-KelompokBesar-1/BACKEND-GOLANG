@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"ourgym/dto"
 	"ourgym/helpers"
-	"ourgym/models"
 	"ourgym/services"
 	"strconv"
 
@@ -38,7 +37,7 @@ func (pc *ProfileController) UpdateProfile(c echo.Context) error {
 
 	userID := getUserIdFromToken(userToken)
 
-	input := models.User{}
+	input := dto.UserRequest{}
 
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", map[string]any{}))

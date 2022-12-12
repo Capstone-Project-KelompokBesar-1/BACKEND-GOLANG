@@ -41,16 +41,21 @@ func (u *UserServiceImpl) GetUserByEmail(email string) dto.UserResponse {
 	return user.ConvertToDTO()
 }
 
-func (u *UserServiceImpl) Create(userRequest models.User) dto.UserResponse {
+func (u *UserServiceImpl) Create(userRequest dto.UserRequest) dto.UserResponse {
 	newPassword, _ := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 	userRequest.Password = string(newPassword)
 
-	user := u.userRepository.Create(userRequest)
+	userModel := models.FromUserRequestToUserModel(userRequest)
+
+	user := u.userRepository.Create(userModel)
 	return user.ConvertToDTO()
 }
 
-func (u *UserServiceImpl) Update(id string, userRequest models.User) dto.UserResponse {
-	user := u.userRepository.Update(id, userRequest)
+func (u *UserServiceImpl) Update(id string, userRequest dto.UserRequest) dto.UserResponse {
+	userModel := models.FromUserRequestToUserModel(userRequest)
+
+	user := u.userRepository.Update(id, userModel)
+
 	return user.ConvertToDTO()
 }
 
@@ -74,8 +79,11 @@ func (u *UserServiceImpl) ChangePassword(id string, passwords dto.ChangePassword
 	return nil
 }
 
-func (u *UserServiceImpl) UpdatePhoto(id string, userRequest models.User) dto.UserResponse {
-	user := u.userRepository.Update(id, userRequest)
+func (u *UserServiceImpl) UpdatePhoto(id string, userRequest dto.UserRequest) dto.UserResponse {
+	userModel := models.FromUserRequestToUserModel(userRequest)
+
+	user := u.userRepository.Update(id, userModel)
+
 	return user.ConvertToDTO()
 }
 

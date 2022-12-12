@@ -3,9 +3,9 @@ package models
 import "ourgym/dto"
 
 type PaymentMethod struct {
-	ID   uint   `json:"id" form:"id" gorm:"primaryKey"`
-	Name string `json:"name" form:"name"`
-	Code string `json:"code" form:"code"`
+	ID   uint `gorm:"primaryKey"`
+	Name string
+	Code string
 }
 
 func (pm PaymentMethod) ConvertToDTO() dto.PaymentMethodResponse {

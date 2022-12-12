@@ -14,3 +14,16 @@ func (cp *ChangePasswordRequest) Validate() error {
 
 	return err
 }
+
+type LoginRequest struct {
+	Email    string `json:"email" form:"email" validate:"required,email"`
+	Password string `json:"password" form:"password" validate:"required"`
+}
+
+func (lr *LoginRequest) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(lr)
+
+	return err
+}
