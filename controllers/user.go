@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"ourgym/dto"
 	"ourgym/services"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -49,7 +51,15 @@ func (uc *UserController) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
-	user := uc.userService.Create(input)
+	if _, err := time.Parse("2006-01-02", input.BirthDate); err != nil && input.BirthDate != "" {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid, date format invalid", nil))
+	}
+
+	user, err := uc.userService.Create(input)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, fmt.Sprint(err), nil))
+	}
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "Success Created User", user))
 }
@@ -63,6 +73,10 @@ func (uc *UserController) Update(c echo.Context) error {
 
 	if err := input.Validate(); err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
+
+	if _, err := time.Parse("2006-01-02", input.BirthDate); err != nil && input.BirthDate != "" {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid, date format invalid", nil))
 	}
 
 	var userId string = c.Param("id")

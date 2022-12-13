@@ -7,6 +7,7 @@ import (
 	"ourgym/helpers"
 	"ourgym/services"
 	"strconv"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
@@ -45,6 +46,10 @@ func (pc *ProfileController) UpdateProfile(c echo.Context) error {
 
 	if err := input.Validate(); err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", map[string]any{}))
+	}
+
+	if _, err := time.Parse("2006-01-02", input.BirthDate); err != nil && input.BirthDate != "" {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid, date format invalid", nil))
 	}
 
 	photo, err := c.FormFile("photo")

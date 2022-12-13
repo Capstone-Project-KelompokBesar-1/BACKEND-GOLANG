@@ -51,10 +51,7 @@ func (ac *AuthController) Register(c echo.Context) error {
 
 	err := ac.authService.Register(userRequest)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
-			"code":    http.StatusBadRequest,
-			"message": fmt.Sprint(err),
-		})
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, fmt.Sprint(err), nil))
 	}
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "success registered user", map[string]any{}))

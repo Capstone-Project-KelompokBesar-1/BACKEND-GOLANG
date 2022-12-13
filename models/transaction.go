@@ -42,7 +42,7 @@ func (t Transaction) ConvertToDTO() dto.TransactionResponse {
 			Email:     t.User.Email,
 			Address:   t.User.Address,
 			Gender:    t.User.Gender,
-			BirthDate: t.User.BirthDate,
+			BirthDate: t.User.BirthDate.Format("2006-01-02"),
 			Photo:     t.User.Photo,
 			IsAdmin:   t.User.IsAdmin,
 		},

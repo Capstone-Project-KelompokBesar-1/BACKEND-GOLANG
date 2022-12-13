@@ -30,7 +30,7 @@ func (u User) ConvertToDTO() dto.UserResponse {
 		Email:     u.Email,
 		Address:   u.Address,
 		Gender:    u.Gender,
-		BirthDate: u.BirthDate,
+		BirthDate: u.BirthDate.Format("2006-01-02"),
 		Photo:     u.Photo,
 		IsAdmin:   u.IsAdmin,
 	}
@@ -45,6 +45,7 @@ func (u *User) Validate() error {
 }
 
 func FromUserRequestToUserModel(request dto.UserRequest) User {
+	birthDate, _ := time.Parse("2006-01-02", request.BirthDate)
 	return User{
 		Name:      request.Name,
 		Phone:     request.Phone,
@@ -52,7 +53,7 @@ func FromUserRequestToUserModel(request dto.UserRequest) User {
 		Password:  request.Password,
 		Address:   request.Address,
 		Gender:    request.Gender,
-		BirthDate: request.BirthDate,
+		BirthDate: birthDate,
 		Photo:     request.Photo,
 	}
 }

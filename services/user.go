@@ -36,19 +36,20 @@ func (u *UserServiceImpl) GetByID(id string) dto.UserResponse {
 	return user.ConvertToDTO()
 }
 
-func (u *UserServiceImpl) GetUserByEmail(email string) dto.UserResponse {
-	user := u.userRepository.GetOneByFilter("id", email)
-	return user.ConvertToDTO()
-}
+func (u *UserServiceImpl) Create(userRequest dto.UserRequest) (dto.UserResponse, error) {
+	userChecked := u.userRepository.GetOneByFilter("email", userRequest.Email)
 
-func (u *UserServiceImpl) Create(userRequest dto.UserRequest) dto.UserResponse {
+	if userRequest.Email == userChecked.Email {
+		return dto.UserResponse{}, errors.New("email has been registered")
+	}
+
 	newPassword, _ := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 	userRequest.Password = string(newPassword)
 
 	userModel := models.FromUserRequestToUserModel(userRequest)
 
 	user := u.userRepository.Create(userModel)
-	return user.ConvertToDTO()
+	return user.ConvertToDTO(), nil
 }
 
 func (u *UserServiceImpl) Update(id string, userRequest dto.UserRequest) dto.UserResponse {

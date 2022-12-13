@@ -16,7 +16,7 @@ type AuthService interface {
 type UserService interface {
 	GetAll(name string) []dto.UserResponse
 	GetByID(id string) dto.UserResponse
-	Create(userRequest dto.UserRequest) dto.UserResponse
+	Create(userRequest dto.UserRequest) (dto.UserResponse, error)
 	Update(id string, userRequest dto.UserRequest) dto.UserResponse
 	ChangePassword(id string, passwords dto.ChangePasswordRequest) error
 	Delete(id string) bool
