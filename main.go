@@ -49,6 +49,8 @@ func main() {
 
 	e := route.InitRoute()
 
+	middlewares.CORS(e)
+
 	middlewares.Logger(e)
 
 	port := os.Getenv("PORT")
