@@ -20,16 +20,14 @@ type Transaction struct {
 }
 
 func (t Transaction) ConvertToDTO() dto.TransactionResponse {
-	var expiredAt, successAt string
+	var expiredAt string = t.CreatedAt.Local().Add(time.Hour * 24).String()
 	if t.Status == "settlement" || t.Status == "capture" {
 		t.Status = "berhasil"
-		successAt = t.UpdatedAt.String()
+		expiredAt = ""
 	} else if t.Status == "pending" {
 		t.Status = "tertunda"
-		expiredAt = t.CreatedAt.Add(time.Hour * 24).String()
 	} else {
 		t.Status = "gagal"
-		expiredAt = t.CreatedAt.Add(time.Hour * 24).String()
 	}
 
 	return dto.TransactionResponse{
@@ -62,7 +60,7 @@ func (t Transaction) ConvertToDTO() dto.TransactionResponse {
 		Amount:        t.Amount,
 		Status:        t.Status,
 		ExpiredAt:     expiredAt,
-		SuccessAt:     successAt,
+		UpdatedAt:     t.UpdatedAt.Local(),
 	}
 }
 
