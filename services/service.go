@@ -53,3 +53,7 @@ type TrainerService interface {
 	GetAll(name string) []dto.TrainerResponse
 	GetByID(id string) dto.TrainerResponse
 }
+
+type DashboardService interface {
+	GetData() dto.DashboardResponse
+}

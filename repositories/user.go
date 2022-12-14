@@ -97,3 +97,11 @@ func (ur *UserRepositoryImpl) DeleteMany(ids string) bool {
 
 	return true
 }
+
+func (ur *UserRepositoryImpl) CountUser() int64 {
+	var total int64
+
+	ur.db.Find(&models.User{}, "is_admin = ?", false).Count(&total)
+
+	return total
+}

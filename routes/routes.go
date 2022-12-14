@@ -18,6 +18,7 @@ type ControllerList struct {
 	TrainerController       controllers.TrainerController
 	TransactionController   controllers.TransactionController
 	PaymentMethodController controllers.PaymentMethodController
+	DashboardController     controllers.DashboardController
 }
 
 func (cl ControllerList) InitRoute() *echo.Echo {
@@ -84,6 +85,9 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	transactions.PUT("/:id", cl.TransactionController.Update, adminJwtMiddleware)
 	transactions.DELETE("/:id", cl.TransactionController.Delete, adminJwtMiddleware)
 	transactions.DELETE("", cl.TransactionController.DeleteMany, adminJwtMiddleware)
+
+	dashboard := e.Group("/dashboard")
+	dashboard.GET("", cl.DashboardController.GetData, adminJwtMiddleware)
 
 	e.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{

@@ -14,6 +14,7 @@ type UserRepository interface {
 	ChangePassword(id string, newPassword string) bool
 	Delete(id string) bool
 	DeleteMany(ids string) bool
+	CountUser() int64
 }
 
 type ClassRepository interface {
@@ -23,11 +24,13 @@ type ClassRepository interface {
 	Update(id string, userRequest models.Class) models.Class
 	Delete(id string) bool
 	DeleteMany(ids string) bool
+	CountClass() int64
 }
 
 type TrainerRepository interface {
 	GetAll(name string) []models.Trainer
 	GetByID(id string) models.Trainer
+	CountTrainer() int64
 }
 
 type PaymentMethodRepository interface {
@@ -45,6 +48,7 @@ type TransactionRepository interface {
 	Update(id string, userRequest models.Transaction) models.Transaction
 	Delete(id string) bool
 	DeleteMany(ids string) bool
+	CountTotalIncome() int64
 }
 
 type OtpRepository interface {

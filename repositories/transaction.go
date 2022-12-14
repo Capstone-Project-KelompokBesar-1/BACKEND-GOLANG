@@ -156,3 +156,11 @@ func (tr *TransactionRepositoryImpl) DeleteMany(ids string) bool {
 
 	return true
 }
+
+func (tr *TransactionRepositoryImpl) CountTotalIncome() int64 {
+	var totalIncome int64
+
+	tr.db.Raw("SELECT sum(amount) FROM transactions WHERE (status = 'settlement' OR status = 'capture') AND updated_at >= ?", time.Now().Add(7*-24*time.Hour)).Scan(&totalIncome)
+
+	return int64(totalIncome)
+}
