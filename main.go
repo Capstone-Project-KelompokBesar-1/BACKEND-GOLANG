@@ -21,6 +21,7 @@ func main() {
 	trainerRepo := repositories.NewTrainerRepository(db)
 	userRepo := repositories.NewUserRepository(db)
 	transactionRepo := repositories.NewTransactionRepository(db, userRepo, paymentMethodRepo)
+	categoryRepo := repositories.NewCategoryRepository(db)
 
 	authService := services.NewAuthService(userRepo, otpRepo)
 	classService := services.NewClassService(classRepo)
@@ -28,6 +29,7 @@ func main() {
 	trainerService := services.NewTrainerService(trainerRepo)
 	transactionService := services.NewTransactionService(transactionRepo)
 	userService := services.NewUserService(userRepo)
+	categoryService := services.NewCategoryService(categoryRepo)
 	dashboardService := services.NewDashboardService(userRepo, trainerRepo, classRepo, transactionRepo)
 
 	authController := controllers.NewAuthController(authService)
@@ -37,6 +39,7 @@ func main() {
 	trainerController := controllers.NewTrainerController(trainerService)
 	transactionController := controllers.NewTransactionController(transactionService)
 	userController := controllers.NewUserController(userService)
+	categoryController := controllers.NewCategoryController(categoryService)
 	dashboardController := controllers.NewDashboardController(dashboardService)
 
 	route := routes.ControllerList{
@@ -47,6 +50,7 @@ func main() {
 		TrainerController:       *trainerController,
 		TransactionController:   *transactionController,
 		PaymentMethodController: *paymentMethodController,
+		CategoryController:      *categoryController,
 		DashboardController:     *dashboardController,
 	}
 
