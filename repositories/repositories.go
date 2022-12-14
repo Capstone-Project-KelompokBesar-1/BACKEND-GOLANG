@@ -51,3 +51,17 @@ type OtpRepository interface {
 	GetOneByFilter(key string, value any) models.Otp
 	Delete(id uint) bool
 }
+
+type ArticleRepository interface {
+	GetAll(title string) []models.Article
+	GetArticleByID(articleID string) []models.Article
+	Create(articleRequest models.Article) models.Article
+	Update(id string, articleRequest models.Article) models.Article
+	Delete(id string) bool
+	DeleteManyArticle(ids string) bool
+}
+
+type CategoryRepository interface {
+	GetAll(name string) []models.Category
+	GetByID(id string) models.Category
+}

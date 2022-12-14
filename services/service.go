@@ -53,3 +53,8 @@ type TrainerService interface {
 	GetAll(name string) []dto.TrainerResponse
 	GetByID(id string) dto.TrainerResponse
 }
+
+type CategoryService interface {
+	GetAll(name string) []dto.CategoryResponse
+	GetByID(id string) dto.CategoryResponse
+}
