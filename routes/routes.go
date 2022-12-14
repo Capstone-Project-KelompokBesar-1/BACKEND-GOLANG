@@ -18,6 +18,7 @@ type ControllerList struct {
 	TrainerController       controllers.TrainerController
 	TransactionController   controllers.TransactionController
 	PaymentMethodController controllers.PaymentMethodController
+	MeController            controllers.MeController
 }
 
 func (cl ControllerList) InitRoute() *echo.Echo {
@@ -43,6 +44,8 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	user.PUT("/profile", cl.ProfileController.UpdateProfile, userJwtMiddleware)
 	user.PUT("/change-password", cl.ProfileController.ChangePassword, userJwtMiddleware)
 	user.POST("user/refresh-token", cl.AuthController.RefreshToken, userJwtMiddleware)
+	user.GET("/my-class-online/:id", cl.MeController.OnlineClass, userJwtMiddleware)
+	user.GET("/my-class-offline/:id", cl.MeController.OfflineClass, userJwtMiddleware)
 
 	users := e.Group("/users")
 

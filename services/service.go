@@ -53,3 +53,8 @@ type TrainerService interface {
 	GetAll(name string) []dto.TrainerResponse
 	GetByID(id string) dto.TrainerResponse
 }
+
+type MeService interface {
+	OnlineClass(userId string) []dto.ClassForTransactionResponse
+	OfflineClass(userId string) []dto.ClassForTransactionResponse
+}
