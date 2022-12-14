@@ -19,6 +19,7 @@ type ControllerList struct {
 	TransactionController   controllers.TransactionController
 	PaymentMethodController controllers.PaymentMethodController
 	CategoryController      controllers.CategoryController
+	DashboardController     controllers.DashboardController
 }
 
 func (cl ControllerList) InitRoute() *echo.Echo {
@@ -90,6 +91,10 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 
 	categories.GET("", cl.CategoryController.GetAll, userJwtMiddleware)
 	categories.GET("/:id", cl.CategoryController.GetByID, userJwtMiddleware)
+
+	dashboard := e.Group("/dashboard")
+	dashboard.GET("", cl.DashboardController.GetData, adminJwtMiddleware)
+  
 
 	e.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{

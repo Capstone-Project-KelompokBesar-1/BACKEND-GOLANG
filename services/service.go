@@ -57,4 +57,7 @@ type TrainerService interface {
 type CategoryService interface {
 	GetAll(name string) []dto.CategoryResponse
 	GetByID(id string) dto.CategoryResponse
+
+type DashboardService interface {
+	GetData() dto.DashboardResponse
 }

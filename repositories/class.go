@@ -18,38 +18,38 @@ type ClassRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (ur *ClassRepositoryImpl) GetAll(classType string, name string) []models.Class {
+func (cr *ClassRepositoryImpl) GetAll(classType string, name string) []models.Class {
 	var class []models.Class
 
 	if classType == "" {
-		ur.db.Preload(clause.Associations).Find(&class, "name LIKE ?", "%"+name+"%")
+		cr.db.Preload(clause.Associations).Find(&class, "name LIKE ?", "%"+name+"%")
 	} else {
-		ur.db.Preload(clause.Associations).Find(&class, "type = ? && name LIKE ?", classType, "%"+name+"%")
+		cr.db.Preload(clause.Associations).Find(&class, "type = ? && name LIKE ?", classType, "%"+name+"%")
 	}
 
 	return class
 }
 
-func (ur *ClassRepositoryImpl) GetOneByFilter(key string, value any) models.Class {
+func (cr *ClassRepositoryImpl) GetOneByFilter(key string, value any) models.Class {
 	var class models.Class
 
-	ur.db.Preload(clause.Associations).First(&class, key, value)
+	cr.db.Preload(clause.Associations).First(&class, key, value)
 
 	return class
 }
 
-func (ur *ClassRepositoryImpl) Create(classRequest models.Class) models.Class {
+func (cr *ClassRepositoryImpl) Create(classRequest models.Class) models.Class {
 	var class models.Class
 
-	rec := ur.db.Create(&classRequest)
+	rec := cr.db.Create(&classRequest)
 
 	rec.Preload(clause.Associations).Last(&class)
 
 	return class
 }
 
-func (ur *ClassRepositoryImpl) Update(id string, classRequest models.Class) models.Class {
-	class := ur.GetOneByFilter("id", id)
+func (cr *ClassRepositoryImpl) Update(id string, classRequest models.Class) models.Class {
+	class := cr.GetOneByFilter("id", id)
 
 	class.Name = classRequest.Name
 	class.Thumbnail = classRequest.Thumbnail
@@ -61,17 +61,17 @@ func (ur *ClassRepositoryImpl) Update(id string, classRequest models.Class) mode
 	class.Price = classRequest.Price
 	class.TotalMeeting = classRequest.TotalMeeting
 
-	rec := ur.db.Save(&class)
+	rec := cr.db.Save(&class)
 
 	rec.Preload(clause.Associations).Last(&class)
 
 	return class
 }
 
-func (ur *ClassRepositoryImpl) Delete(id string) bool {
-	class := ur.GetOneByFilter("id", id)
+func (cr *ClassRepositoryImpl) Delete(id string) bool {
+	class := cr.GetOneByFilter("id", id)
 
-	rec := ur.db.Delete(&class)
+	rec := cr.db.Delete(&class)
 
 	if rec.RowsAffected == 0 {
 		return false
@@ -80,14 +80,22 @@ func (ur *ClassRepositoryImpl) Delete(id string) bool {
 	return true
 }
 
-func (ur *ClassRepositoryImpl) DeleteMany(ids string) bool {
+func (cr *ClassRepositoryImpl) DeleteMany(ids string) bool {
 	classIds := strings.Split(ids, ",")
 
-	rec := ur.db.Delete(&models.Class{}, "id IN (?)", classIds)
+	rec := cr.db.Delete(&models.Class{}, "id IN (?)", classIds)
 
 	if rec.RowsAffected == 0 {
 		return false
 	}
 
 	return true
+}
+
+func (cr *ClassRepositoryImpl) CountClass() int64 {
+	var total int64
+
+	cr.db.Find(&models.Class{}).Count(&total)
+
+	return total
 }

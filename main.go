@@ -30,6 +30,7 @@ func main() {
 	transactionService := services.NewTransactionService(transactionRepo)
 	userService := services.NewUserService(userRepo)
 	categoryService := services.NewCategoryService(categoryRepo)
+	dashboardService := services.NewDashboardService(userRepo, trainerRepo, classRepo, transactionRepo)
 
 	authController := controllers.NewAuthController(authService)
 	classController := controllers.NewClassController(classService)
@@ -39,6 +40,7 @@ func main() {
 	transactionController := controllers.NewTransactionController(transactionService)
 	userController := controllers.NewUserController(userService)
 	categoryController := controllers.NewCategoryController(categoryService)
+	dashboardController := controllers.NewDashboardController(dashboardService)
 
 	route := routes.ControllerList{
 		AuthController:          *authController,
@@ -49,6 +51,7 @@ func main() {
 		TransactionController:   *transactionController,
 		PaymentMethodController: *paymentMethodController,
 		CategoryController:      *categoryController,
+		DashboardController:     *dashboardController,
 	}
 
 	e := route.InitRoute()

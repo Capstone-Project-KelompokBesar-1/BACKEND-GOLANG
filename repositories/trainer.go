@@ -31,3 +31,11 @@ func (tr *TrainerRepositoryImpl) GetByID(id string) models.Trainer {
 
 	return trainer
 }
+
+func (tr *TrainerRepositoryImpl) CountTrainer() int64 {
+	var total int64
+
+	tr.db.Find(&models.Trainer{}).Count(&total)
+
+	return total
+}
