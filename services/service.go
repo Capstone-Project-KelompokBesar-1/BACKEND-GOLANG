@@ -58,3 +58,12 @@ type MeService interface {
 	OnlineClass(userId string) []dto.ClassForTransactionResponse
 	OfflineClass(userId string) []dto.ClassForTransactionResponse
 }
+
+type CategoryService interface {
+	GetAll(name string) []dto.CategoryResponse
+	GetByID(id string) dto.CategoryResponse
+}
+
+type DashboardService interface {
+	GetData() dto.DashboardResponse
+}

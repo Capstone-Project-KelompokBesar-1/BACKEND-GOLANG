@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -14,7 +16,7 @@ type TransactionResponse struct {
 	Amount        int                         `json:"amount"`
 	Status        string                      `json:"status"`
 	ExpiredAt     string                      `json:"expired_at"`
-	SuccessAt     string                      `json:"success_at"`
+	UpdatedAt     time.Time                   `json:"updated_at"`
 }
 
 type TransactionRequest struct {

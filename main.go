@@ -22,6 +22,7 @@ func main() {
 	userRepo := repositories.NewUserRepository(db)
 	transactionRepo := repositories.NewTransactionRepository(db, userRepo, paymentMethodRepo)
 	MeRepo := repositories.NewMeRepository(db)
+	categoryRepo := repositories.NewCategoryRepository(db)
 
 	authService := services.NewAuthService(userRepo, otpRepo)
 	classService := services.NewClassService(classRepo)
@@ -30,6 +31,8 @@ func main() {
 	transactionService := services.NewTransactionService(transactionRepo)
 	userService := services.NewUserService(userRepo)
 	meService := services.NewMeService(MeRepo)
+	categoryService := services.NewCategoryService(categoryRepo)
+	dashboardService := services.NewDashboardService(userRepo, trainerRepo, classRepo, transactionRepo)
 
 	authController := controllers.NewAuthController(authService)
 	classController := controllers.NewClassController(classService)
@@ -39,6 +42,8 @@ func main() {
 	transactionController := controllers.NewTransactionController(transactionService)
 	userController := controllers.NewUserController(userService)
 	meController := controllers.NewMeController(meService)
+	categoryController := controllers.NewCategoryController(categoryService)
+	dashboardController := controllers.NewDashboardController(dashboardService)
 
 	route := routes.ControllerList{
 		AuthController:          *authController,
@@ -49,9 +54,13 @@ func main() {
 		TransactionController:   *transactionController,
 		PaymentMethodController: *paymentMethodController,
 		MeController:            *meController,
+		CategoryController:      *categoryController,
+		DashboardController:     *dashboardController,
 	}
 
 	e := route.InitRoute()
+
+	middlewares.CORS(e)
 
 	middlewares.Logger(e)
 
