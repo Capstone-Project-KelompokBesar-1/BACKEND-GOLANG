@@ -21,7 +21,7 @@ func (me *MeServiceImpl) OnlineClass(userId string) []dto.ClassForTransactionRes
 	var onlineClassResponse []dto.ClassForTransactionResponse
 
 	for _, transaction := range transactions {
-		if transaction.Status == "berhasil" && transaction.Class.Type == "online" {
+		if transaction.Status == "settlement" && transaction.Class.Type == "online" {
 			onlineClassResponse = append(onlineClassResponse, transaction.ConvertToDTO().Class)
 		}
 	}
@@ -35,7 +35,7 @@ func (me *MeServiceImpl) OfflineClass(userId string) []dto.ClassForTransactionRe
 	var offlineClassResponse []dto.ClassForTransactionResponse
 
 	for _, transaction := range transactions {
-		if transaction.Status == "berhasil" && transaction.Class.Type == "offline" {
+		if transaction.Status == "settlement" && transaction.Class.Type == "offline" {
 			offlineClassResponse = append(offlineClassResponse, transaction.ConvertToDTO().Class)
 		}
 	}
