@@ -121,6 +121,8 @@ func (as *AuthServiceImpl) ValidateOTP(otpCode int) (map[string]string, error) {
 		return nil, errors.New("otp expired")
 	}
 
+	as.otpRepo.Delete(otp.ID)
+
 	user := as.userRepo.GetOneByFilter("id", otp.UserID)
 	token, _ := middlewares.GenerateToken(user, 1)
 

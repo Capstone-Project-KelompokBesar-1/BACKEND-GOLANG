@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/mail"
 	"ourgym/dto"
@@ -60,13 +61,20 @@ func (ac *AuthController) Register(c echo.Context) error {
 }
 
 func (ac *AuthController) ForgotPassword(c echo.Context) error {
-	email := c.FormValue("email")
+	var request struct {
+		Email string `json:"email" form:"email" validate:"required,email"`
+	}
 
-	if _, err := mail.ParseAddress(email); err != nil {
+	if err := c.Bind(&request); err != nil {
+		log.Println(err)
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
 
-	err := ac.authService.ForgotPassword(email)
+	if _, err := mail.ParseAddress(request.Email); err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
+
+	err := ac.authService.ForgotPassword(request.Email)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, fmt.Sprint(err), nil))
@@ -76,7 +84,16 @@ func (ac *AuthController) ForgotPassword(c echo.Context) error {
 }
 
 func (ac *AuthController) ValidateOTP(c echo.Context) error {
-	otpCodeString := c.FormValue("otp_code")
+	var request struct {
+		OTPCode int `json:"otp_code" form:"otp_code"`
+	}
+
+	if err := c.Bind(&request); err != nil {
+		log.Println(err)
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
+
+	otpCodeString := strconv.FormatInt(int64(request.OTPCode), 10)
 
 	if len(otpCodeString) != 4 {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
