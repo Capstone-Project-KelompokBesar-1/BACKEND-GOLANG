@@ -19,7 +19,7 @@ type CategoryRepositoryImpl struct {
 func (cr *CategoryRepositoryImpl) GetAll(name string) []models.Category {
 	var categories []models.Category
 
-	cr.db.Find(&categories, "name LIKE ?", "%"+name+"%name")
+	cr.db.Find(&categories, "name LIKE ?", "%"+name+"%")
 
 	return categories
 }
