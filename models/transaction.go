@@ -56,11 +56,15 @@ func (t Transaction) ConvertToDTO() dto.TransactionResponse {
 			Type:         t.Class.Type,
 			Price:        t.Class.Price,
 		},
-		PaymentMethod: t.PaymentMethod.Name,
-		Amount:        t.Amount,
-		Status:        t.Status,
-		ExpiredAt:     expiredAt,
-		UpdatedAt:     t.UpdatedAt.Local(),
+		PaymentMethodID: t.PaymentMethodID,
+		PaymentMethod: dto.PaymentMethodResponse{
+			ID:   t.PaymentMethod.ID,
+			Name: t.PaymentMethod.Name,
+		},
+		Amount:    t.Amount,
+		Status:    t.Status,
+		ExpiredAt: expiredAt,
+		UpdatedAt: t.UpdatedAt.Local(),
 	}
 }
 

@@ -7,16 +7,17 @@ import (
 )
 
 type TransactionResponse struct {
-	ID            string                      `json:"id"`
-	UserID        uint                        `json:"user_id"`
-	User          UserResponse                `json:"user"`
-	ClassID       uint                        `json:"class_id"`
-	Class         ClassForTransactionResponse `json:"class"`
-	PaymentMethod string                      `json:"payment_method"`
-	Amount        int                         `json:"amount"`
-	Status        string                      `json:"status"`
-	ExpiredAt     string                      `json:"expired_at"`
-	UpdatedAt     time.Time                   `json:"updated_at"`
+	ID              string                      `json:"id"`
+	UserID          uint                        `json:"user_id"`
+	User            UserResponse                `json:"user"`
+	ClassID         uint                        `json:"class_id"`
+	Class           ClassForTransactionResponse `json:"class"`
+	PaymentMethodID uint                        `json:"payment_method_id"`
+	PaymentMethod   PaymentMethodResponse       `json:"payment_method"`
+	Amount          int                         `json:"amount"`
+	Status          string                      `json:"status"`
+	ExpiredAt       string                      `json:"expired_at"`
+	UpdatedAt       time.Time                   `json:"updated_at"`
 }
 
 type TransactionRequest struct {
