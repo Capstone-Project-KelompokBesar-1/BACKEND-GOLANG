@@ -2,10 +2,8 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"net/smtp"
-	"ourgym/databases"
 	"ourgym/dto"
 	"ourgym/middlewares"
 	"ourgym/models"
@@ -70,51 +68,75 @@ func (as *AuthServiceImpl) Register(userRequest dto.UserRequest) error {
 	return nil
 }
 
-func (as *AuthServiceImpl) SendOTP(email string) error {
-	// var user models.User
+func (as *AuthServiceImpl) ForgotPassword(email string) error {
 	user := as.userRepo.GetOneByFilter("email", email)
-	if user.Email != "" {
-		token, _ := middlewares.GenerateToken(user, 1)
-		rand.Seed(time.Now().UnixNano())
-		randCode := rand.Intn(9999-0000) + 0000
-		otp := models.Otp{
-			User:  user.ID,
-			Code:  strconv.Itoa(randCode),
-			Token: token,
-		}
-		databases.InitDatabase().Create(&otp)
 
-		auth := smtp.PlainAuth(
-			"",
-			"fadlieferdiansyah62@gmail.com",
-			"ejcvjptcyesolcox",
-			"smtp.gmail.com",
-		)
-		msg := "Subject: Ourgym: OTP forgot password\n" + "This is your otp code " + strconv.Itoa(randCode) + ", please take care of your code"
-		err := smtp.SendMail(
-			"smtp.gmail.com:587",
-			auth,
-			"fadlieferdiansyah62@gmail.com",
-			[]string{user.Email},
-			[]byte(msg),
-		)
-
-		if err != nil {
-			fmt.Println(err)
-		}
+	if user.Email == "" {
+		return errors.New("user not found")
 	}
+
+	rand.Seed(time.Now().UnixNano())
+	randCode := rand.Intn(9999-0000) + 0000
+	otpRequest := models.Otp{
+		UserID:    user.ID,
+		Code:      randCode,
+		ExpiredAt: time.Now().Add(time.Minute * 3),
+	}
+
+	otp := as.otpRepo.Create(otpRequest)
+
+	auth := smtp.PlainAuth(
+		"",
+		"fadlieferdiansyah62@gmail.com",
+		"ejcvjptcyesolcox",
+		"smtp.gmail.com",
+	)
+	msg := "Subject: Ourgym: OTP forgot password\n" + "This is your otp code " + strconv.Itoa(otp.Code) + ", please take care of your code\n *the otp code will be expired in 3 minutes"
+	err := smtp.SendMail(
+		"smtp.gmail.com:587",
+		auth,
+		user.Email,
+		[]string{user.Email},
+		[]byte(msg),
+	)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (as *AuthServiceImpl) CreateNewPassword(otp, new_password string) error {
+func (as *AuthServiceImpl) ValidateOTP(otpCode int) (map[string]string, error) {
+	otp := as.otpRepo.GetOneByFilter("code", otpCode)
 
-	oo := as.otpRepo.GetOneByFilter("code", otp)
-	user := as.userRepo.GetOneByFilter("id", oo.User)
-	id := strconv.Itoa(int(user.ID))
+	if otp.ID == 0 {
+		return nil, errors.New("otp invalid")
+	}
+
+	timeNow := time.Now().Unix()
+	expiredAt := otp.ExpiredAt.Unix()
+
+	if expiredAt < timeNow {
+		return nil, errors.New("otp expired")
+	}
+
+	user := as.userRepo.GetOneByFilter("id", otp.UserID)
+	token, _ := middlewares.GenerateToken(user, 1)
+
+	return map[string]string{
+		"token": token,
+	}, nil
+}
+
+func (as *AuthServiceImpl) ResetPassword(id, new_password string) error {
 	password, _ := bcrypt.GenerateFromPassword([]byte(new_password), bcrypt.DefaultCost)
-	user.Password = string(password)
-	as.userRepo.Update(id, user)
-	as.otpRepo.Delete(oo.ID)
+
+	isSuccess := as.userRepo.ChangePassword(id, string(password))
+
+	if !isSuccess {
+		return errors.New("failed to create new password")
+	}
 
 	return nil
 }

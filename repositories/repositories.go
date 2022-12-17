@@ -53,6 +53,7 @@ type TransactionRepository interface {
 
 type OtpRepository interface {
 	GetOneByFilter(key string, value any) models.Otp
+	Create(otp models.Otp) models.Otp
 	Delete(id uint) bool
 }
 

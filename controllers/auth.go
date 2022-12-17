@@ -3,10 +3,12 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"net/mail"
 	"ourgym/dto"
 	"ourgym/middlewares"
 	"ourgym/models"
 	"ourgym/services"
+	"strconv"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
@@ -57,19 +59,52 @@ func (ac *AuthController) Register(c echo.Context) error {
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "success registered user", map[string]any{}))
 }
 
-func (ac *AuthController) SendOTP(c echo.Context) error {
-	err := ac.authService.SendOTP(c.FormValue("email"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
-			"code":    http.StatusBadRequest,
-			"message": fmt.Sprint(err),
-		})
+func (ac *AuthController) ForgotPassword(c echo.Context) error {
+	email := c.FormValue("email")
+
+	if _, err := mail.ParseAddress(email); err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
 	}
+
+	err := ac.authService.ForgotPassword(email)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, fmt.Sprint(err), nil))
+	}
+
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "OTP has been sended to email, Please check your email", map[string]any{}))
 }
 
-func (ac *AuthController) CreateNewPassword(c echo.Context) error {
-	err := ac.authService.CreateNewPassword(c.FormValue("code_otp"), c.FormValue("new_password"))
+func (ac *AuthController) ValidateOTP(c echo.Context) error {
+	otpCodeString := c.FormValue("otp_code")
+
+	if len(otpCodeString) != 4 {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
+
+	otpCode, _ := strconv.Atoi(otpCodeString)
+
+	token, err := ac.authService.ValidateOTP(otpCode)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, fmt.Sprint(err), nil))
+	}
+
+	return c.JSON(http.StatusOK, Response(http.StatusOK, "OTP code valid", token))
+}
+
+func (ac *AuthController) ResetPassword(c echo.Context) error {
+	userToken := c.Get("user").(*jwt.Token)
+
+	userID := getUserIdFromToken(userToken)
+
+	var passwords dto.ChangePasswordRequest
+
+	if err := c.Bind(&passwords); err != nil {
+		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid", nil))
+	}
+
+	err := ac.authService.ResetPassword(userID, passwords.NewPassword)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]any{
 			"code":    http.StatusBadRequest,

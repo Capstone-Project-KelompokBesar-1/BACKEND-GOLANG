@@ -27,18 +27,18 @@ func (cl ControllerList) InitRoute() *echo.Echo {
 	e := echo.New()
 	cfg := config.Cfg
 
-	e.POST("/login", cl.AuthController.Login)
-	e.POST("/register", cl.AuthController.Register)
-	e.POST("/send-otp", cl.AuthController.SendOTP)
-	e.POST("/forgot-password", cl.AuthController.CreateNewPassword)
-
 	configAdmin := middleware.JWTConfig{
 		KeyFunc: middlewares.GetJWTSecretKeyForAdmin,
 	}
 
 	adminJwtMiddleware := middleware.JWTWithConfig(configAdmin)
-
 	userJwtMiddleware := middleware.JWT([]byte(cfg.JWT_SECRET_KEY))
+
+	e.POST("/login", cl.AuthController.Login)
+	e.POST("/register", cl.AuthController.Register)
+	e.POST("/forgot-password", cl.AuthController.ForgotPassword)
+	e.POST("/validate-otp", cl.AuthController.ValidateOTP)
+	e.POST("/reset-password", cl.AuthController.ResetPassword, userJwtMiddleware)
 
 	user := e.Group("/user")
 

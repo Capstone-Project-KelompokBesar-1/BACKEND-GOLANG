@@ -23,6 +23,14 @@ func (otpR *OtpRepositoryImpl) GetOneByFilter(key string, value any) models.Otp 
 	return otp
 }
 
+func (otpR *OtpRepositoryImpl) Create(otp models.Otp) models.Otp {
+	rec := otpR.db.Create(&otp)
+
+	rec.Last(&otp)
+
+	return otp
+}
+
 func (otpR *OtpRepositoryImpl) Delete(id uint) bool {
 	otp := otpR.GetOneByFilter("id", id)
 

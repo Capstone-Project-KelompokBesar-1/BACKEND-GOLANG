@@ -9,8 +9,9 @@ import (
 type AuthService interface {
 	Login(loginRequest dto.LoginRequest) (map[string]string, error)
 	Register(userRequest dto.UserRequest) error
-	SendOTP(email string) error
-	CreateNewPassword(otp, new_password string) error
+	ForgotPassword(email string) error
+	ValidateOTP(otpCode int) (map[string]string, error)
+	ResetPassword(otp, new_password string) error
 }
 
 type UserService interface {
