@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"ourgym/dto"
+	"ourgym/helpers"
 	"ourgym/services"
 	"time"
 
@@ -55,6 +56,15 @@ func (uc *UserController) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid, date format invalid", nil))
 	}
 
+	photo, err := c.FormFile("photo")
+
+	if err == nil {
+		url := helpers.UploadImage(photo, "pp")
+		if url != "" {
+			input.Photo = url
+		}
+	}
+
 	user, err := uc.userService.Create(input)
 
 	if err != nil {
@@ -77,6 +87,15 @@ func (uc *UserController) Update(c echo.Context) error {
 
 	if _, err := time.Parse("2006-01-02", input.BirthDate); err != nil && input.BirthDate != "" {
 		return c.JSON(http.StatusBadRequest, Response(http.StatusBadRequest, "Request invalid, date format invalid", nil))
+	}
+
+	photo, err := c.FormFile("photo")
+
+	if err == nil {
+		url := helpers.UploadImage(photo, "pp")
+		if url != "" {
+			input.Photo = url
+		}
 	}
 
 	var userId string = c.Param("id")
