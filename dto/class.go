@@ -29,7 +29,7 @@ type ClassForTransactionResponse struct {
 }
 
 type ClassRequest struct {
-	TrainerID    uint   `json:"trainer_id" form:"trainer_id"`
+	TrainerID    uint   `json:"trainer_id" form:"trainer_id" validate:"required"`
 	CategoryID   uint   `json:"category_id" form:"category_id" validate:"required"`
 	Name         string `json:"name" form:"name" validate:"required"`
 	Description  string `json:"description" form:"description" validate:"required"`
