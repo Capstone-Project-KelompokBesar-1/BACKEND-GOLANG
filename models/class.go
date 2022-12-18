@@ -17,6 +17,7 @@ type Class struct {
 	Thumbnail    string
 	Type         string
 	Price        int
+	Transactions []Transaction
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }

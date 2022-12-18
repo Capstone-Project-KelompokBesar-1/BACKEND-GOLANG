@@ -71,7 +71,7 @@ func (cr *ClassRepositoryImpl) Update(id string, classRequest models.Class) mode
 func (cr *ClassRepositoryImpl) Delete(id string) bool {
 	class := cr.GetOneByFilter("id", id)
 
-	rec := cr.db.Delete(&class)
+	rec := cr.db.Select("Transactions").Delete(&class)
 
 	if rec.RowsAffected == 0 {
 		return false
@@ -83,7 +83,11 @@ func (cr *ClassRepositoryImpl) Delete(id string) bool {
 func (cr *ClassRepositoryImpl) DeleteMany(ids string) bool {
 	classIds := strings.Split(ids, ",")
 
-	rec := cr.db.Delete(&models.Class{}, "id IN (?)", classIds)
+	var classes []models.Class
+
+	cr.db.Find(&classes, "id IN (?)", classIds)
+
+	rec := cr.db.Select("Transactions").Delete(&classes, "id IN (?)", classIds)
 
 	if rec.RowsAffected == 0 {
 		return false

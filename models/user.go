@@ -8,18 +8,19 @@ import (
 )
 
 type User struct {
-	ID        uint `gorm:"primaryKey"`
-	Name      string
-	Phone     string
-	Email     string
-	Password  string
-	Address   string
-	Gender    string
-	BirthDate time.Time
-	Photo     string
-	IsAdmin   bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID           uint `gorm:"primaryKey"`
+	Name         string
+	Phone        string
+	Email        string
+	Password     string
+	Address      string
+	Gender       string
+	BirthDate    time.Time
+	Photo        string
+	IsAdmin      bool
+	Transactions []Transaction
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 func (u User) ConvertToDTO() dto.UserResponse {

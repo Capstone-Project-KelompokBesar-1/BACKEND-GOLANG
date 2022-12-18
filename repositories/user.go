@@ -77,7 +77,7 @@ func (ur *UserRepositoryImpl) ChangePassword(id string, newPassword string) bool
 func (ur *UserRepositoryImpl) Delete(id string) bool {
 	user := ur.GetOneByFilter("id", id)
 
-	rec := ur.db.Delete(&user)
+	rec := ur.db.Select("Transactions").Delete(&user)
 
 	if rec.RowsAffected == 0 {
 		return false
@@ -89,7 +89,11 @@ func (ur *UserRepositoryImpl) Delete(id string) bool {
 func (ur *UserRepositoryImpl) DeleteMany(ids string) bool {
 	userIds := strings.Split(ids, ",")
 
-	rec := ur.db.Delete(&models.User{}, "id IN (?)", userIds)
+	var users []models.User
+
+	ur.db.Find(&users, "id IN (?)", userIds)
+
+	rec := ur.db.Select("Transactions").Delete(&users, "id IN (?)", userIds)
 
 	if rec.RowsAffected == 0 {
 		return false
