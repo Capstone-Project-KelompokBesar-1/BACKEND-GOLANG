@@ -10,8 +10,9 @@ import (
 )
 
 type jwtCustomClaims struct {
-	ID      uint `json:"id"`
-	IsAdmin bool `json:"is_admin"`
+	ID      uint   `json:"id"`
+	IsAdmin bool   `json:"is_admin"`
+	Email   string `json:"email"`
 	jwt.StandardClaims
 }
 
@@ -19,6 +20,7 @@ func GenerateToken(user models.User, expLimit time.Duration) (string, error) {
 	claims := &jwtCustomClaims{
 		user.ID,
 		user.IsAdmin,
+		user.Email,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * expLimit).Unix(),
 		},

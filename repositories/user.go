@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"ourgym/models"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -16,10 +17,10 @@ type UserRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (ur *UserRepositoryImpl) GetAll() []models.User {
+func (ur *UserRepositoryImpl) GetAll(name string) []models.User {
 	var users []models.User
 
-	ur.db.Find(&users, "isAdmin = ?", false)
+	ur.db.Find(&users, "is_admin = ? && name LIKE ?", false, "%"+name+"%")
 
 	return users
 }
@@ -43,11 +44,14 @@ func (ur *UserRepositoryImpl) Create(userRequest models.User) models.User {
 }
 
 func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.User {
-	user := ur.GetOneByFilter("id", models.User{}.Name)
+	user := ur.GetOneByFilter("id", id)
 
 	user.Name = userRequest.Name
-	user.Password = userRequest.Password
 	user.Phone = userRequest.Phone
+	user.Address = userRequest.Address
+	user.Gender = userRequest.Gender
+	user.BirthDate = userRequest.BirthDate
+	user.Photo = userRequest.Photo
 
 	rec := ur.db.Save(&user)
 
@@ -56,14 +60,52 @@ func (ur *UserRepositoryImpl) Update(id string, userRequest models.User) models.
 	return user
 }
 
-func (ur *UserRepositoryImpl) Delete(id string) bool {
-	user := ur.GetOneByFilter("id", models.User{}.Name)
+func (ur *UserRepositoryImpl) ChangePassword(id string, newPassword string) bool {
+	user := ur.GetOneByFilter("id", id)
 
-	rec := ur.db.Delete(&user)
+	user.Password = newPassword
+
+	rec := ur.db.Save(&user)
 
 	if rec.RowsAffected == 0 {
 		return false
 	}
 
 	return true
+}
+
+func (ur *UserRepositoryImpl) Delete(id string) bool {
+	user := ur.GetOneByFilter("id", id)
+
+	rec := ur.db.Select("Transactions").Delete(&user)
+
+	if rec.RowsAffected == 0 {
+		return false
+	}
+
+	return true
+}
+
+func (ur *UserRepositoryImpl) DeleteMany(ids string) bool {
+	userIds := strings.Split(ids, ",")
+
+	var users []models.User
+
+	ur.db.Find(&users, "id IN (?)", userIds)
+
+	rec := ur.db.Select("Transactions").Delete(&users, "id IN (?)", userIds)
+
+	if rec.RowsAffected == 0 {
+		return false
+	}
+
+	return true
+}
+
+func (ur *UserRepositoryImpl) CountUser() int64 {
+	var total int64
+
+	ur.db.Find(&models.User{}, "is_admin = ?", false).Count(&total)
+
+	return total
 }
