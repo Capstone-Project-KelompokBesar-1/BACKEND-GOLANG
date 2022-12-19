@@ -41,7 +41,7 @@ type PaymentMethodRepository interface {
 type TransactionRepository interface {
 	GetAll() []models.Transaction
 	GetHistory() []models.Transaction
-	GetByUserID(userID string) []models.Transaction
+	GetByUserID(userID, status string) []models.Transaction
 	GetByID(id string) models.Transaction
 	Create(classRequest models.Transaction) (snap.Response, error)
 	UpdatedByMidtransAPI(transactionRequest models.Transaction) error

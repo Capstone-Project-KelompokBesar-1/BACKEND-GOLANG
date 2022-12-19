@@ -36,7 +36,7 @@ type ClassService interface {
 type TransactionService interface {
 	GetAll() []dto.TransactionResponse
 	GetHistory() []dto.TransactionResponse
-	GetByUserID(userID string) []dto.TransactionResponse
+	GetByUserID(userID, status string) []dto.TransactionResponse
 	GetByID(id string) dto.TransactionResponse
 	Create(transactionRequest dto.TransactionRequest) (snap.Response, error)
 	UpdatedByMidtransAPI(midtransTransaction dto.MidtransTransactionRequest) error

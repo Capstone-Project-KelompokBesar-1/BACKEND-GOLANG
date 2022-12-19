@@ -41,11 +41,12 @@ func (uc *TransactionController) GetHistory(c echo.Context) error {
 
 func (uc *TransactionController) GetByUserID(c echo.Context) error {
 	var userID string = c.Param("id")
+	var status string = c.QueryParam("status")
 
-	transactions := uc.transactionService.GetByUserID(userID)
+	transactions := uc.transactionService.GetByUserID(userID, status)
 
 	if len(transactions) == 0 {
-		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "transactions history not found", nil))
+		return c.JSON(http.StatusNotFound, Response(http.StatusNotFound, "transactions not found", nil))
 	}
 
 	return c.JSON(http.StatusOK, Response(http.StatusOK, "success get transactions by user id", transactions))

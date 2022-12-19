@@ -42,8 +42,8 @@ func (cs *TransactionServiceImpl) GetHistory() []dto.TransactionResponse {
 	return transactionsResponse
 }
 
-func (cs *TransactionServiceImpl) GetByUserID(userID string) []dto.TransactionResponse {
-	transactions := cs.transactionRepository.GetByUserID(userID)
+func (cs *TransactionServiceImpl) GetByUserID(userID, status string) []dto.TransactionResponse {
+	transactions := cs.transactionRepository.GetByUserID(userID, status)
 
 	var transactionsResponse []dto.TransactionResponse
 

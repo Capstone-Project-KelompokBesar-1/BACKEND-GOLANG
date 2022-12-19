@@ -44,10 +44,14 @@ func (tr *TransactionRepositoryImpl) GetHistory() []models.Transaction {
 	return transactions
 }
 
-func (tr *TransactionRepositoryImpl) GetByUserID(userID string) []models.Transaction {
+func (tr *TransactionRepositoryImpl) GetByUserID(userID, status string) []models.Transaction {
 	var transactions []models.Transaction
 
-	tr.db.Preload(clause.Associations).Find(&transactions, "user_id = ?", userID)
+	if status != "" {
+		tr.db.Preload(clause.Associations).Find(&transactions, "user_id = ? && status = ?", userID, status)
+	} else {
+		tr.db.Preload(clause.Associations).Find(&transactions, "user_id = ?", userID)
+	}
 
 	return transactions
 }
